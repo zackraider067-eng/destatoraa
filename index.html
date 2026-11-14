@@ -21,7 +21,7 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="logo">M</div><div><h1>MikroTik Security Tester</h1><p>محاكي محلي لمقاومة تخمين كلمات المرور • الإصدار 0.4</p></div></header>
+<header class="top"><div class="logo">M</div><div><h1>MikroTik Security Tester</h1><p>محاكي محلي لمقاومة تخمين كلمات المرور • الإصدار 0.5</p></div></header>
 <div class="notice"><b>وضع آمن:</b> المحاكي يحسب عدد المحاولات والزمن نظريًا داخل الهاتف فقط. لا يرسل أي طلبات تسجيل دخول إلى الراوتر ولا يجرب كلمات مرور عليه.</div>
 <nav class="tabs">
 <button class="tab active" data-tab="sim">المحاكي</button><button class="tab" data-tab="audit">فحص الحماية</button><button class="tab" data-tab="about">عن التطبيق</button>
@@ -32,7 +32,7 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 <p class="muted">نستخدم أرقامًا افتراضية ضمن النطاق الذي حددته. نمط الكروت المحدد: اسم المستخدم من 1 إلى 9,999,999,999، وكلمة المرور من 01 إلى 100. المحاكاة محلية فقط.</p>
 <div class="grid">
 <div class="field"><label for="targetUser">رقم اسم المستخدم المستهدف</label><input id="targetUser" type="number" min="1" max="9999999999" value="2500" inputmode="numeric"></div>
-<div class="field"><label for="targetPass">رقم كلمة المرور المستهدف (01 إلى 100)ة</label><input id="targetPass" type="number" min="1" max="100" value="37" inputmode="numeric"></div>
+<div class="field"><label for="targetPass">رقم كلمة المرور المستهدف (01 إلى 100)</label><input id="targetPass" type="number" min="1" max="100" value="37" inputmode="numeric"></div>
 </div>
 <div class="field"><label for="rate">معدل المحاولات الافتراضي في الثانية</label><input id="rate" type="number" min="0.01" max="1000000000" step="any" value="5" inputmode="decimal"></div>
 <div class="field"><label for="delay">تأخير افتراضي بين المحاولات (مللي ثانية)</label><select id="delay"><option value="0">0 ms — دون تأخير</option><option value="250">250 ms</option><option value="1000" selected>1000 ms — ثانية</option><option value="5000">5000 ms — 5 ثوانٍ</option><option value="30000">30000 ms — 30 ثانية</option></select></div>
@@ -43,6 +43,14 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 <div class="stat"><small>متوسط موضع الهدف النظري</small><strong id="averageAttempts">499,999,999,950</strong></div>
 </div>
 <button class="secondary" id="exportReport" disabled>تحميل تقرير المحاكاة</button>
+</div>
+<div class="panel">
+<h2>🧩 تحليل قابلية توقّع نمط الكارت</h2>
+<p class="muted">حلّل تصميم بيانات الكروت دون إنشاء كلمات مرور أو إرسال محاولات إلى الراوتر.</p>
+<div class="field"><label for="userPattern">نمط اسم المستخدم</label><select id="userPattern"><option value="sequential" selected>متسلسل أو قابل للتوقع</option><option value="random">عشوائي مستقل</option></select></div>
+<div class="field"><label for="passPattern">نمط كلمة المرور (01 إلى 100)</label><select id="passPattern"><option value="fixed">ثابت أو متكرر</option><option value="sequential">متسلسل أو مرتبط برقم الكارت</option><option value="random" selected>عشوائي مستقل</option></select></div>
+<button class="secondary" id="analyzePattern">حلّل مستوى المخاطر</button>
+<div class="result" id="patternResult" aria-live="polite">اختر النمط الفعلي للكروت ثم ابدأ التحليل.</div>
 </div>
 <div class="panel">
 <h2>⚡ قياس سرعة الهاتف محليًا</h2>
@@ -74,7 +82,7 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 <section id="about" class="hidden">
 <div class="panel"><h2>ℹ️ معلومات الإصدار</h2><ul><li>الإصدار: 0.4 — نموذج حسابي مطابق لنطاق الكروت المحدد.</li><li>نطاق أسماء المستخدمين الافتراضي: 1 إلى 9,999,999,999.</li><li>نطاق كلمات المرور: 01 إلى 100 (100 احتمال).</li><li>لا يتم تخزين أو إرسال بيانات دخول.</li><li>لا يوجد اتصال مباشر بالراوتر في هذا الإصدار.</li><li>أضيفت بنود مراجعة خاصة بأمان كروت Hotspot ومراقبة محاولات الدخول.</li></ul></div>
 </section>
-<p class="footer">مشروع تجريبي تعليمي • destatoraa • V0.4</p>
+<p class="footer">مشروع تجريبي تعليمي • destatoraa • V0.5</p>
 </div>
 <script>
 const $=id=>document.getElementById(id);
@@ -108,7 +116,7 @@ $('calculate').addEventListener('click',()=>{
  const fullSeconds=fullCount/rate+(fullCount-1)*delay/1000;
  const scenarios=[0,1,5,30].map(seconds=>({seconds,time:duration(count/rate+(count-1)*seconds)}));
  lastReport={user:u,password:p,attempts:attempts.toString(),rate,delay,seconds:total,averageSeconds,fullSeconds,scenarios,createdAt:new Date().toLocaleString('ar-EG')};
- $('result').innerHTML='<b class="good">نتيجة المحاكاة الحسابية — V0.2</b><br>نطاق اسم المستخدم: <b>1 إلى 9,999,999,999</b><br>نطاق كلمة المرور: <b>01 إلى 100</b><br>عدد التركيبات الكلي: <b>'+TOTAL_COMBINATIONS.toLocaleString('en-US')+'</b><br>المحاولات حتى الموضع المحدد: <b>'+attempts.toLocaleString('en-US')+'</b><br>الزمن دون تأخير إضافي: <b>'+duration(pure)+'</b><br>الزمن مع التأخير المختار: <b>'+duration(total)+'</b><br>متوسط الزمن النظري إذا كان موضع الهدف عشوائيًا: <b>'+duration(averageSeconds)+'</b><br>زمن المرور على فضاء البحث كاملًا: <b>'+duration(fullSeconds)+'</b><hr style="border-color:#263852"><b>مقارنة أثر التأخير على الموضع المحدد</b><br>'+scenarios.map(s=>'تأخير '+s.seconds+' ثانية: <b>'+s.time+'</b>').join('<br>')+'<br><span class="muted">نتائج رياضية افتراضية فقط. معدل العمليات الحسابية على الهاتف لا يمثل معدل محاولات تسجيل الدخول عبر الشبكة.</span>';
+ $('result').innerHTML='<b class="good">نتيجة المحاكاة الحسابية — V0.5</b><br>نطاق اسم المستخدم: <b>1 إلى 9,999,999,999</b><br>نطاق كلمة المرور: <b>01 إلى 100</b><br>عدد التركيبات الكلي: <b>'+TOTAL_COMBINATIONS.toLocaleString('en-US')+'</b><br>المحاولات حتى الموضع المحدد: <b>'+attempts.toLocaleString('en-US')+'</b><br>الزمن دون تأخير إضافي: <b>'+duration(pure)+'</b><br>الزمن مع التأخير المختار: <b>'+duration(total)+'</b><br>متوسط الزمن النظري إذا كان موضع الهدف عشوائيًا: <b>'+duration(averageSeconds)+'</b><br>زمن المرور على فضاء البحث كاملًا: <b>'+duration(fullSeconds)+'</b><hr style="border-color:#263852"><b>مقارنة أثر التأخير على الموضع المحدد</b><br>'+scenarios.map(s=>'تأخير '+s.seconds+' ثانية: <b>'+s.time+'</b>').join('<br>')+'<br><span class="muted">نتائج رياضية افتراضية فقط. معدل العمليات الحسابية على الهاتف لا يمثل معدل محاولات تسجيل الدخول عبر الشبكة.</span>';
  $('exportReport').disabled=false;
 });
 $('exportReport').addEventListener('click',()=>{
@@ -130,6 +138,20 @@ $('exportReport').addEventListener('click',()=>{
  ];
  const blob=new Blob([lines.join('\\n')],{type:'text/plain;charset=utf-8'});
  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='mikrotik-simulation-report.txt';a.click();URL.revokeObjectURL(url);
+});
+$('analyzePattern').addEventListener('click',()=>{
+ const up=$('userPattern').value, pp=$('passPattern').value;
+ const userBits=Math.log2(9999999999), passBits=Math.log2(100);
+ let level='مرتفع', notes=[];
+ if(up==='sequential') notes.push('اسم المستخدم المتسلسل لا يوفر سرية عشوائية حقيقية؛ قد يسهل توقّع الحسابات إذا عُرف نمط الإصدار.');
+ else notes.push('العشوائية المستقلة لاسم المستخدم تقلل قابلية التوقع، بشرط استخدام مولّد عشوائي آمن وعدم إعادة الاستخدام.');
+ if(pp==='fixed'){level='حرج';notes.push('كلمة المرور الثابتة أو المتكررة تضعف كل الكروت التي تشترك فيها.');}
+ else if(pp==='sequential'){level='حرج';notes.push('ربط كلمة المرور برقم الكارت أو تسلسلها يجعل النمط قابلًا للاستنتاج.');}
+ else notes.push('اختيار كلمة مرور عشوائية مستقلة من 100 احتمال أفضل من النمط الثابت، لكنه يظل فضاءً صغيرًا جدًا.');
+ if(up==='sequential' && pp==='random') level='مرتفع';
+ if(up==='random' && pp==='random') level='متوسط مع بقاء كلمة المرور ضعيفة';
+ const totalBits=userBits+passBits;
+ $('patternResult').innerHTML='<b class="'+(level==='حرج'?'danger':level==='مرتفع'?'warn':'good')+'">التقييم: '+level+'</b><br>عدد احتمالات اسم المستخدم النظري: <b>9,999,999,999</b> (نحو '+userBits.toFixed(2)+' بت)<br>عدد احتمالات كلمة المرور: <b>100</b> (نحو '+passBits.toFixed(2)+' بت)<br>القيمة النظرية المجمعة عند الاستقلال والعشوائية الكاملة: <b>'+totalBits.toFixed(2)+' بت</b><ul>'+notes.map(n=>'<li>'+n+'</li>').join('')+'</ul><b>التوصية:</b> استخدم أسماء مستخدمين غير متسلسلة وكلمات مرور أطول وعشوائية ومستقلة لكل كارت، مع تقييد محاولات الدخول ومراجعة السجلات.<br><span class="muted">الأرقام تقيس حجم فضاء القيم فقط، ولا تتنبأ بزمن اختراق فعلي. لا يتم توليد بيانات دخول أو اختبارها.</span>';
 });
 $('benchmark').addEventListener('click',()=>{
  const start=performance.now();let x=0;for(let i=0;i<1500000;i++)x=(x+i)%1000003;
