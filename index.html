@@ -12,7 +12,7 @@
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0%,#17304a 0,#08111f 45%);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--txt);min-height:100vh}
 .wrap{max-width:760px;margin:auto;padding:18px 14px 40px}.top{display:flex;align-items:center;gap:12px;margin:6px 0 20px}.logo{width:46px;height:46px;border-radius:15px;background:linear-gradient(135deg,#54d6a0,#2776c8);display:grid;place-items:center;font-size:23px;color:#06121d;font-weight:900}.top h1{font-size:19px;margin:0}.top p{font-size:12px;color:var(--muted);margin:4px 0 0}
 .notice{border:1px solid #725b2d;background:#2b2418;color:#ffe2a8;padding:12px;border-radius:14px;font-size:12px;line-height:1.7;margin-bottom:15px}
-.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:14px 0}.tab{border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:11px 5px;border-radius:12px;font-weight:700}.tab.active{background:#173d3b;color:#baf8dd;border-color:#286f5a}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:14px 0}.tab{border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:11px 5px;border-radius:12px;font-weight:700}.tab.active{background:#173d3b;color:#baf8dd;border-color:#286f5a}
 .panel{background:linear-gradient(160deg,var(--panel),#0e192a);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 10px 28px #0002}.panel h2{font-size:16px;margin:0 0 12px}.muted{color:var(--muted);font-size:12px;line-height:1.7}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:flex;flex-direction:column;gap:6px;margin:10px 0}.field label{font-size:12px;color:var(--muted)}input,select{width:100%;border:1px solid var(--line);border-radius:11px;background:#091525;color:var(--txt);padding:12px;font-size:15px;outline:none}input:focus,select:focus{border-color:var(--blue)}
 button{border:0;border-radius:12px;padding:12px 14px;font-weight:800;font-size:14px;cursor:pointer}.primary{background:var(--accent);color:#062018;width:100%;margin-top:8px}.secondary{background:#20324c;color:#dceaff;width:100%;margin-top:8px}.statgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.stat{background:var(--panel2);border:1px solid var(--line);border-radius:13px;padding:12px}.stat small{color:var(--muted);display:block;font-size:11px}.stat strong{display:block;font-size:18px;margin-top:5px;overflow-wrap:anywhere}.result{background:#0a1727;border:1px dashed #3c5879;border-radius:13px;padding:13px;margin-top:12px;line-height:1.8;font-size:13px}.good{color:var(--accent)}.warn{color:var(--warn)}.danger{color:var(--red)}.bar{height:9px;background:#26364d;border-radius:20px;overflow:hidden;margin:10px 0}.bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#2776c8,#54d6a0);transition:width .2s}
 ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;line-height:1.6}.hidden{display:none}.footer{text-align:center;color:var(--muted);font-size:11px;margin-top:22px}
@@ -21,11 +21,26 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="logo">M</div><div><h1>MikroTik Security Tester</h1><p>محاكي محلي لمقاومة تخمين كلمات المرور • الإصدار 0.9</p></div></header>
+<header class="top"><div class="logo">M</div><div><h1>MikroTik Security Tester</h1><p>محاكي محلي لمقاومة تخمين كلمات المرور • الإصدار 1.0</p></div></header>
 <div class="notice"><b>وضع آمن:</b> المحاكي يحسب عدد المحاولات والزمن نظريًا داخل الهاتف فقط. لا يرسل أي طلبات تسجيل دخول إلى الراوتر ولا يجرب كلمات مرور عليه.</div>
 <nav class="tabs">
-<button class="tab active" data-tab="sim">المحاكي</button><button class="tab" data-tab="audit">فحص الحماية</button><button class="tab" data-tab="about">عن التطبيق</button><button class="tab" data-tab="logs">تحليل السجلات</button>
+<button class="tab active" data-tab="dashboard">لوحة النتائج</button><button class="tab" data-tab="sim">المحاكي</button><button class="tab" data-tab="audit">فحص الحماية</button><button class="tab" data-tab="about">عن التطبيق</button><button class="tab" data-tab="logs">تحليل السجلات</button>
 </nav>
+<section id="dashboard">
+<div class="panel">
+<h2>📊 لوحة الحالة الأمنية الموحدة</h2>
+<p class="muted">ملخص يجمع نتائج المحاكاة ومراجعة إعدادات الحماية وتحليل السجلات التي أدخلتها. القيم غير المتاحة تعني أن الاختبار لم يُنفذ بعد.</p>
+<div class="statgrid">
+<div class="stat"><small>تغطية مراجعة الحماية</small><strong id="dashCoverage">لم تبدأ</strong></div>
+<div class="stat"><small>حالة المحاكاة</small><strong id="dashSimulation">لم تُحسب</strong></div>
+<div class="stat"><small>حالات فشل الدخول المرصودة</small><strong id="dashFailures">لا توجد بيانات</strong></div>
+<div class="stat"><small>مصادر ذات تكرار سريع</small><strong id="dashBursts">لا توجد بيانات</strong></div>
+</div>
+<div class="result" id="dashSummary" aria-live="polite">ابدأ بمراجعة البنود أو تحليل سجلاتك لتظهر النتائج هنا.</div>
+<button class="primary" id="exportCombined">تصدير التقرير الموحد</button>
+<p class="muted">التقييم ذاتي ومساعد فقط. لا يوجد اتصال تلقائي بالراوتر، ولا يمكن اعتبار اكتمال القائمة دليلًا على خلو الشبكة من الثغرات.</p>
+</div>
+</section>
 <section id="sim">
 <div class="panel">
 <h2>🎯 إعداد الحساب التجريبي</h2>
@@ -96,7 +111,7 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 <p class="muted">ملاحظة: تختلف صيغة السجلات حسب إصدار RouterOS وإعدادات التسجيل. قد لا يمكن استخراج عنوان المصدر من كل سطر. التحليل مؤشر مساعد وليس إثباتًا قاطعًا على هجوم.</p>
 </div>
 </section>
-<p class="footer">مشروع تجريبي تعليمي • destatoraa • V0.9</p>
+<p class="footer">مشروع تجريبي تعليمي • destatoraa • V1.0</p>
 </div>
 <script>
 const $=id=>document.getElementById(id);
@@ -108,7 +123,8 @@ $('spaceSize').textContent = TOTAL_COMBINATIONS.toLocaleString('en-US');
 $('averageAttempts').textContent = (TOTAL_COMBINATIONS / 2n).toLocaleString('en-US');
 document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{
  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===btn));
- ['sim','audit','about','logs'].forEach(id=>$(id).classList.toggle('hidden',id!==btn.dataset.tab));
+ ['dashboard','sim','audit','about','logs'].forEach(id=>$(id).classList.toggle('hidden',id!==btn.dataset.tab));
+ if(btn.dataset.tab==='dashboard')updateDashboard();
 }));
 function fmt(n){return new Intl.NumberFormat('en-US',{maximumFractionDigits:2}).format(n)}
 function duration(seconds){
@@ -132,6 +148,7 @@ $('calculate').addEventListener('click',()=>{
  lastReport={user:u,password:p,attempts:attempts.toString(),rate,delay,seconds:total,averageSeconds,fullSeconds,scenarios,createdAt:new Date().toLocaleString('ar-EG')};
  $('result').innerHTML='<b class="good">نتيجة المحاكاة الحسابية — V0.5</b><br>نطاق اسم المستخدم: <b>1 إلى 9,999,999,999</b><br>نطاق كلمة المرور: <b>01 إلى 100</b><br>عدد التركيبات الكلي: <b>'+TOTAL_COMBINATIONS.toLocaleString('en-US')+'</b><br>المحاولات حتى الموضع المحدد: <b>'+attempts.toLocaleString('en-US')+'</b><br>الزمن دون تأخير إضافي: <b>'+duration(pure)+'</b><br>الزمن مع التأخير المختار: <b>'+duration(total)+'</b><br>متوسط الزمن النظري إذا كان موضع الهدف عشوائيًا: <b>'+duration(averageSeconds)+'</b><br>زمن المرور على فضاء البحث كاملًا: <b>'+duration(fullSeconds)+'</b><hr style="border-color:#263852"><b>مقارنة أثر التأخير على الموضع المحدد</b><br>'+scenarios.map(s=>'تأخير '+s.seconds+' ثانية: <b>'+s.time+'</b>').join('<br>')+'<br><span class="muted">نتائج رياضية افتراضية فقط. معدل العمليات الحسابية على الهاتف لا يمثل معدل محاولات تسجيل الدخول عبر الشبكة.</span>';
  $('exportReport').disabled=false;
+ updateDashboard();
 });
 $('exportReport').addEventListener('click',()=>{
  if(!lastReport)return;
@@ -220,6 +237,7 @@ $('analyzeLogs').addEventListener('click',()=>{
  $('exportLogs').disabled=false;
 
  renderLogCharts(lastLogReport);
+ updateDashboard();
 });
 function drawLogBarChart(canvasId,items,labelFn){
  const canvas=$(canvasId);if(!canvas)return;
@@ -265,6 +283,30 @@ const auditPriorities=[
  {title:'منع صفحة الدخول من كشف بيانات كروت أخرى',weight:8},
  {title:'مراجعة سجلات الدخول دوريًا',weight:10}
 ];
+function updateDashboard(){
+ const boxes=[...document.querySelectorAll('#checks input')],done=boxes.filter(x=>x.checked).length,total=boxes.length,pct=Math.round(done/total*100);
+ $('dashCoverage').textContent=done+'/'+total+' ('+pct+'%)';
+ $('dashSimulation').textContent=lastReport?'تم الحساب':'لم تُحسب';
+ $('dashFailures').textContent=lastLogReport?String(lastLogReport.failures):'لا توجد بيانات';
+ $('dashBursts').textContent=lastLogReport?String(lastLogReport.bursts.length):'لا توجد بيانات';
+ const notes=[];
+ if(done<total)notes.push('راجع '+(total-done)+' بندًا غير مؤكد في قائمة الحماية.');
+ if(!lastReport)notes.push('لم يتم تشغيل المحاكاة الحسابية بعد.');
+ if(!lastLogReport)notes.push('لم يتم تحليل سجلات دخول بعد.');
+ if(lastLogReport&&lastLogReport.bursts.length)notes.push('ظهرت مؤشرات تكرار سريع من '+lastLogReport.bursts.length+' مصدر/مصادر؛ راجع السجلات الأصلية.');
+ if(lastLogReport&&lastLogReport.distributed.length)notes.push('ظهرت '+lastLogReport.distributed.length+' دقيقة ذات نشاط مرتفع؛ تحقق من السياق قبل الاستنتاج.');
+ if(done===total)notes.push('تم تأكيد مراجعة البنود الاثني عشر، لكن ذلك لا يثبت صحة الإعدادات.');
+ $('dashSummary').innerHTML='<b>ملخص الحالة</b><ul>'+notes.map(x=>'<li>'+safeText(x)+'</li>').join('')+'</ul>';
+}
+$('exportCombined').addEventListener('click',()=>{
+ const boxes=[...document.querySelectorAll('#checks input')],done=boxes.filter(x=>x.checked).length;
+ const lines=['MikroTik Security Tester - Unified Report V1.0','Generated: '+new Date().toLocaleString(),'','SELF-ASSESSMENT','Confirmed controls: '+done+'/'+boxes.length,'Review coverage: '+Math.round(done/boxes.length*100)+'%','',...auditPriorities.map((x,i)=>(boxes[i]?.checked?'CONFIRMED: ':'NOT CONFIRMED: ')+x.title),'','SIMULATION'];
+ if(lastReport){lines.push('Simulation completed: yes','Target user index: '+lastReport.user,'Password index: '+lastReport.password,'Theoretical attempt position: '+lastReport.attempts,'Assumed local rate: '+lastReport.rate,'Estimated mathematical time: '+duration(lastReport.seconds));}else lines.push('Simulation completed: no');
+ lines.push('','LOG REVIEW');
+ if(lastLogReport){lines.push('Matched failure lines: '+lastLogReport.failures,'Timed failure lines: '+lastLogReport.timedCount,'Unique source entries: '+lastLogReport.ranked.length,'Same-source bursts (>=5 in 60 sec): '+lastLogReport.bursts.length,'Minute peaks (>=10 failures): '+lastLogReport.distributed.length,...lastLogReport.ranked.map(([ip,count])=>ip+': '+count));}else lines.push('Log review completed: no');
+ lines.push('','IMPORTANT: This is a local self-assessment and log summary, not an automated router scan or proof of security. No login attempts were made.');
+ const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='mikrotik-unified-security-report-v10.txt';a.click();URL.revokeObjectURL(url);
+});
 function updateAudit(){
  const boxes=[...document.querySelectorAll('#checks input')],done=boxes.filter(x=>x.checked).length,total=boxes.length,pct=Math.round(done/total*100);
  $('auditBar').style.width=pct+'%';$('auditCount').textContent=done+' من '+total+' بنود مكتملة — '+pct+'%';
@@ -272,6 +314,7 @@ function updateAudit(){
  $('coverageScore').textContent=pct+'%';$('pendingCount').textContent=total-done;$('coverageBar').style.width=pct+'%';
  const pending=auditPriorities.filter((x,i)=>!boxes[i]?.checked).sort((a,b)=>b.weight-a.weight).slice(0,4);
  $('priorityAdvice').innerHTML='<b>أولويات المراجعة المقترحة</b><ol>'+pending.map(x=>'<li>'+safeText(x.title)+' <span class="muted">— أولوية '+x.weight+'/10</span></li>').join('')+'</ol>'+(pending.length?'ابدأ بهذه البنود ثم أعد حساب النسبة.':'<span class="good">كل البنود تم تأكيد مراجعتها.</span>');
+ updateDashboard();
 }
 $('exportAudit').addEventListener('click',()=>{
  const boxes=[...document.querySelectorAll('#checks input')],done=boxes.filter(x=>x.checked).length;
