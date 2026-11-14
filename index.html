@@ -21,7 +21,7 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="logo">M</div><div><h1>MikroTik Security Tester</h1><p>محاكي محلي لمقاومة تخمين كلمات المرور • الإصدار 0.8</p></div></header>
+<header class="top"><div class="logo">M</div><div><h1>MikroTik Security Tester</h1><p>محاكي محلي لمقاومة تخمين كلمات المرور • الإصدار 0.9</p></div></header>
 <div class="notice"><b>وضع آمن:</b> المحاكي يحسب عدد المحاولات والزمن نظريًا داخل الهاتف فقط. لا يرسل أي طلبات تسجيل دخول إلى الراوتر ولا يجرب كلمات مرور عليه.</div>
 <nav class="tabs">
 <button class="tab active" data-tab="sim">المحاكي</button><button class="tab" data-tab="audit">فحص الحماية</button><button class="tab" data-tab="about">عن التطبيق</button><button class="tab" data-tab="logs">تحليل السجلات</button>
@@ -77,6 +77,7 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 </div>
 <div class="bar"><span id="auditBar"></span></div><p class="muted" id="auditCount">0 من 12 بنود مكتملة</p>
 <div class="result" id="auditAdvice">أكمل البنود لتظهر لك نسبة المراجعة. البنود غير المكتملة تعني نقاطًا تحتاج إلى فحص، وليست إثباتًا بوجود اختراق.</div>
+<div class="panel" style="margin-top:12px"><h3 style="font-size:14px;margin:0 0 8px">التقييم الأمني المبدئي</h3><div class="statgrid"><div class="stat"><small>اكتمال مراجعة الضوابط</small><strong id="coverageScore">0%</strong></div><div class="stat"><small>بنود تحتاج تأكيدًا</small><strong id="pendingCount">12</strong></div></div><div class="bar"><span id="coverageBar"></span></div><div class="result" id="priorityAdvice">ابدأ بمراجعة البنود ذات الأولوية.</div><button class="secondary" id="exportAudit">تصدير تقرير التقييم الأمني</button><p class="muted">هذه نتيجة تقييم ذاتي مبنية على إجاباتك والسجلات التي أدخلتها، وليست فحصًا تلقائيًا أو شهادة بأن الراوتر آمن.</p></div>
 </div>
 </section>
 <section id="about" class="hidden">
@@ -95,7 +96,7 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 <p class="muted">ملاحظة: تختلف صيغة السجلات حسب إصدار RouterOS وإعدادات التسجيل. قد لا يمكن استخراج عنوان المصدر من كل سطر. التحليل مؤشر مساعد وليس إثباتًا قاطعًا على هجوم.</p>
 </div>
 </section>
-<p class="footer">مشروع تجريبي تعليمي • destatoraa • V0.8</p>
+<p class="footer">مشروع تجريبي تعليمي • destatoraa • V0.9</p>
 </div>
 <script>
 const $=id=>document.getElementById(id);
@@ -250,7 +251,34 @@ $('exportLogs').addEventListener('click',()=>{
  const blob=new Blob([report.join('\n')],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
  a.href=url;a.download='mikrotik-log-review-v07.txt';a.click();URL.revokeObjectURL(url);
 });
-function updateAudit(){const boxes=[...document.querySelectorAll('#checks input')],done=boxes.filter(x=>x.checked).length,total=boxes.length,pct=Math.round(done/total*100);$('auditBar').style.width=pct+'%';$('auditCount').textContent=done+' من '+total+' بنود مكتملة — '+pct+'%';$('auditAdvice').innerHTML=pct===100?'<span class="good">اكتملت قائمة المراجعة.</span> احتفظ بسجلاتك وراجعها دوريًا.': '<span class="warn">هناك '+(total-done)+' بنود لم يتم تأكيدها.</span> راجعها على الراوتر قبل بيع الكروت.';}
+const auditPriorities=[
+ {title:'تقييد الوصول الإداري لعناوين موثوقة فقط',weight:10},
+ {title:'تفعيل قواعد Firewall لحماية خدمات الإدارة',weight:10},
+ {title:'تغيير بيانات حساب admin الافتراضية',weight:10},
+ {title:'مراجعة سجلات الدخول بصورة دورية',weight:10},
+ {title:'منع أنماط كروت Hotspot سهلة التوقع',weight:10},
+ {title:'تعطيل خدمات الإدارة غير الضرورية',weight:8},
+ {title:'تحديث RouterOS إلى إصدار مدعوم',weight:8},
+ {title:'استخدام حساب إداري محدود الصلاحيات',weight:8},
+ {title:'منع كشف بيانات الكروت في صفحة الدخول',weight:8},
+ {title:'ضبط حدود الجلسات ومشاركة الكروت',weight:6},
+ {title:'حفظ نسخة احتياطية آمنة',weight:6},
+ {title:'مراجعة إعدادات الأجهزة المسموح بها',weight:6}
+];
+function updateAudit(){
+ const boxes=[...document.querySelectorAll('#checks input')],done=boxes.filter(x=>x.checked).length,total=boxes.length,pct=Math.round(done/total*100);
+ $('auditBar').style.width=pct+'%';$('auditCount').textContent=done+' من '+total+' بنود مكتملة — '+pct+'%';
+ $('auditAdvice').innerHTML=pct===100?'<span class="good">تم تأكيد مراجعة جميع البنود.</span> استمر في المراجعة الدورية.':'<span class="warn">هناك '+(total-done)+' بنود لم يتم تأكيدها.</span> عدم التأكيد لا يعني بالضرورة وجود ثغرة.';
+ $('coverageScore').textContent=pct+'%';$('pendingCount').textContent=total-done;$('coverageBar').style.width=pct+'%';
+ const pending=auditPriorities.filter((x,i)=>!boxes[i]?.checked).sort((a,b)=>b.weight-a.weight).slice(0,4);
+ $('priorityAdvice').innerHTML='<b>أولويات المراجعة المقترحة</b><ol>'+pending.map(x=>'<li>'+safeText(x.title)+' <span class="muted">— أولوية '+x.weight+'/10</span></li>').join('')+'</ol>'+(pending.length?'ابدأ بهذه البنود ثم أعد حساب النسبة.':'<span class="good">كل البنود تم تأكيد مراجعتها.</span>');
+}
+$('exportAudit').addEventListener('click',()=>{
+ const boxes=[...document.querySelectorAll('#checks input')],done=boxes.filter(x=>x.checked).length;
+ const lines=['MikroTik Security Tester - Self Assessment V0.9','Generated: '+new Date().toLocaleString(),'Review coverage: '+Math.round(done/boxes.length*100)+'%','Confirmed controls: '+done+'/'+boxes.length,'','Control status:',...auditPriorities.map((x,i)=>(boxes[i]?.checked?'CONFIRMED: ':'NOT CONFIRMED: ')+x.title),'','This is a self-assessment, not an automated router scan or proof of security.'];
+ if(lastLogReport){lines.push('','Log review summary:','Matched failures: '+lastLogReport.failures,'Timed failures: '+lastLogReport.timedCount,'Sources: '+lastLogReport.ranked.length,'Same-source bursts: '+lastLogReport.bursts.length,'Minute peaks: '+lastLogReport.distributed.length);}
+ const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='mikrotik-security-assessment-v09.txt';a.click();URL.revokeObjectURL(url);
+});
 document.querySelectorAll('#checks input').forEach(x=>x.addEventListener('change',updateAudit));
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script>
