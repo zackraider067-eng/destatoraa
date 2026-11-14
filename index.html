@@ -21,7 +21,7 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="logo">M</div><div><h1>MikroTik Security Tester</h1><p>محاكي محلي لمقاومة تخمين كلمات المرور • الإصدار 0.3</p></div></header>
+<header class="top"><div class="logo">M</div><div><h1>MikroTik Security Tester</h1><p>محاكي محلي لمقاومة تخمين كلمات المرور • الإصدار 0.4</p></div></header>
 <div class="notice"><b>وضع آمن:</b> المحاكي يحسب عدد المحاولات والزمن نظريًا داخل الهاتف فقط. لا يرسل أي طلبات تسجيل دخول إلى الراوتر ولا يجرب كلمات مرور عليه.</div>
 <nav class="tabs">
 <button class="tab active" data-tab="sim">المحاكي</button><button class="tab" data-tab="audit">فحص الحماية</button><button class="tab" data-tab="about">عن التطبيق</button>
@@ -29,10 +29,10 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 <section id="sim">
 <div class="panel">
 <h2>🎯 إعداد الحساب التجريبي</h2>
-<p class="muted">نستخدم أرقامًا افتراضية ضمن النطاق الذي حددته. ترتيب المحاكاة: أسماء المستخدمين تصاعديًا، ولكل اسم 100 كلمة مرور.</p>
+<p class="muted">نستخدم أرقامًا افتراضية ضمن النطاق الذي حددته. نمط الكروت المحدد: اسم المستخدم من 1 إلى 9,999,999,999، وكلمة المرور من 01 إلى 100. المحاكاة محلية فقط.</p>
 <div class="grid">
 <div class="field"><label for="targetUser">رقم اسم المستخدم المستهدف</label><input id="targetUser" type="number" min="1" max="9999999999" value="2500" inputmode="numeric"></div>
-<div class="field"><label for="targetPass">رقم كلمة المرور المستهدفة</label><input id="targetPass" type="number" min="1" max="100" value="37" inputmode="numeric"></div>
+<div class="field"><label for="targetPass">رقم كلمة المرور المستهدف (01 إلى 100)ة</label><input id="targetPass" type="number" min="1" max="100" value="37" inputmode="numeric"></div>
 </div>
 <div class="field"><label for="rate">معدل المحاولات الافتراضي في الثانية</label><input id="rate" type="number" min="0.01" max="1000000000" step="any" value="5" inputmode="decimal"></div>
 <div class="field"><label for="delay">تأخير افتراضي بين المحاولات (مللي ثانية)</label><select id="delay"><option value="0">0 ms — دون تأخير</option><option value="250">250 ms</option><option value="1000" selected>1000 ms — ثانية</option><option value="5000">5000 ms — 5 ثوانٍ</option><option value="30000">30000 ms — 30 ثانية</option></select></div>
@@ -72,9 +72,9 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 </div>
 </section>
 <section id="about" class="hidden">
-<div class="panel"><h2>ℹ️ معلومات الإصدار</h2><ul><li>الإصدار: 0.3 — تحسين مراجعة أمان Hotspot والكروت.</li><li>نطاق أسماء المستخدمين الافتراضي: 1 إلى 9,999,999,999.</li><li>نطاق كلمات المرور الافتراضي: 1 إلى 100.</li><li>لا يتم تخزين أو إرسال بيانات دخول.</li><li>لا يوجد اتصال مباشر بالراوتر في هذا الإصدار.</li><li>أضيفت بنود مراجعة خاصة بأمان كروت Hotspot ومراقبة محاولات الدخول.</li></ul></div>
+<div class="panel"><h2>ℹ️ معلومات الإصدار</h2><ul><li>الإصدار: 0.4 — نموذج حسابي مطابق لنطاق الكروت المحدد.</li><li>نطاق أسماء المستخدمين الافتراضي: 1 إلى 9,999,999,999.</li><li>نطاق كلمات المرور: 01 إلى 100 (100 احتمال).</li><li>لا يتم تخزين أو إرسال بيانات دخول.</li><li>لا يوجد اتصال مباشر بالراوتر في هذا الإصدار.</li><li>أضيفت بنود مراجعة خاصة بأمان كروت Hotspot ومراقبة محاولات الدخول.</li></ul></div>
 </section>
-<p class="footer">مشروع تجريبي تعليمي • destatoraa • V0.3</p>
+<p class="footer">مشروع تجريبي تعليمي • destatoraa • V0.4</p>
 </div>
 <script>
 const $=id=>document.getElementById(id);
@@ -97,7 +97,7 @@ function duration(seconds){
 }
 $('calculate').addEventListener('click',()=>{
  const u=Number($('targetUser').value),p=Number($('targetPass').value),rate=Number($('rate').value),delay=Number($('delay').value);
- if(!Number.isInteger(u)||u<1||u>9999999999||!Number.isInteger(p)||p<1||p>100||!Number.isFinite(rate)||rate<=0){$('result').innerHTML='<span class="danger">راجع المدخلات: اسم المستخدم من 1 إلى 9,999,999,999، وكلمة المرور من 1 إلى 100، والمعدل أكبر من صفر.</span>';return;}
+ if(!Number.isInteger(u)||u<1||u>9999999999||!Number.isInteger(p)||p<1||p>100||!Number.isFinite(rate)||rate<=0){$('result').innerHTML='<span class="danger">راجع المدخلات: اسم المستخدم من 1 إلى 9,999,999,999، وكلمة المرور من 01 إلى 100، والمعدل أكبر من صفر.</span>';return;}
  const attempts=(BigInt(u)-1n)*PASSWORDS_PER_USER+BigInt(p);
  const count=Number(attempts);
  const pure=count/rate;
@@ -108,7 +108,7 @@ $('calculate').addEventListener('click',()=>{
  const fullSeconds=fullCount/rate+(fullCount-1)*delay/1000;
  const scenarios=[0,1,5,30].map(seconds=>({seconds,time:duration(count/rate+(count-1)*seconds)}));
  lastReport={user:u,password:p,attempts:attempts.toString(),rate,delay,seconds:total,averageSeconds,fullSeconds,scenarios,createdAt:new Date().toLocaleString('ar-EG')};
- $('result').innerHTML='<b class="good">نتيجة المحاكاة الحسابية — V0.2</b><br>عدد التركيبات الكلي: <b>'+TOTAL_COMBINATIONS.toLocaleString('en-US')+'</b><br>المحاولات حتى الموضع المحدد: <b>'+attempts.toLocaleString('en-US')+'</b><br>الزمن دون تأخير إضافي: <b>'+duration(pure)+'</b><br>الزمن مع التأخير المختار: <b>'+duration(total)+'</b><br>متوسط الزمن النظري إذا كان موضع الهدف عشوائيًا: <b>'+duration(averageSeconds)+'</b><br>زمن المرور على فضاء البحث كاملًا: <b>'+duration(fullSeconds)+'</b><hr style="border-color:#263852"><b>مقارنة أثر التأخير على الموضع المحدد</b><br>'+scenarios.map(s=>'تأخير '+s.seconds+' ثانية: <b>'+s.time+'</b>').join('<br>')+'<br><span class="muted">نتائج رياضية افتراضية فقط. معدل العمليات الحسابية على الهاتف لا يمثل معدل محاولات تسجيل الدخول عبر الشبكة.</span>';
+ $('result').innerHTML='<b class="good">نتيجة المحاكاة الحسابية — V0.2</b><br>نطاق اسم المستخدم: <b>1 إلى 9,999,999,999</b><br>نطاق كلمة المرور: <b>01 إلى 100</b><br>عدد التركيبات الكلي: <b>'+TOTAL_COMBINATIONS.toLocaleString('en-US')+'</b><br>المحاولات حتى الموضع المحدد: <b>'+attempts.toLocaleString('en-US')+'</b><br>الزمن دون تأخير إضافي: <b>'+duration(pure)+'</b><br>الزمن مع التأخير المختار: <b>'+duration(total)+'</b><br>متوسط الزمن النظري إذا كان موضع الهدف عشوائيًا: <b>'+duration(averageSeconds)+'</b><br>زمن المرور على فضاء البحث كاملًا: <b>'+duration(fullSeconds)+'</b><hr style="border-color:#263852"><b>مقارنة أثر التأخير على الموضع المحدد</b><br>'+scenarios.map(s=>'تأخير '+s.seconds+' ثانية: <b>'+s.time+'</b>').join('<br>')+'<br><span class="muted">نتائج رياضية افتراضية فقط. معدل العمليات الحسابية على الهاتف لا يمثل معدل محاولات تسجيل الدخول عبر الشبكة.</span>';
  $('exportReport').disabled=false;
 });
 $('exportReport').addEventListener('click',()=>{
