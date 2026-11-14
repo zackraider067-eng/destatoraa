@@ -1,0 +1,12 @@
+{
+  "name": "MikroTik Security Tester",
+  "short_name": "MikroTik Tester",
+  "description": "Offline local simulator for password resistance estimates and MikroTik security checklist",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#08111f",
+  "theme_color": "#0b1220"
+}
