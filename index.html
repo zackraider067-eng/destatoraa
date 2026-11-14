@@ -21,7 +21,7 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="logo">M</div><div><h1>MikroTik Security Tester</h1><p>محاكي محلي لمقاومة تخمين كلمات المرور • الإصدار 0.7</p></div></header>
+<header class="top"><div class="logo">M</div><div><h1>MikroTik Security Tester</h1><p>محاكي محلي لمقاومة تخمين كلمات المرور • الإصدار 0.8</p></div></header>
 <div class="notice"><b>وضع آمن:</b> المحاكي يحسب عدد المحاولات والزمن نظريًا داخل الهاتف فقط. لا يرسل أي طلبات تسجيل دخول إلى الراوتر ولا يجرب كلمات مرور عليه.</div>
 <nav class="tabs">
 <button class="tab active" data-tab="sim">المحاكي</button><button class="tab" data-tab="audit">فحص الحماية</button><button class="tab" data-tab="about">عن التطبيق</button><button class="tab" data-tab="logs">تحليل السجلات</button>
@@ -89,11 +89,13 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 <div class="field"><label for="logInput">سجلات RouterOS / Hotspot</label><textarea id="logInput" rows="9" style="width:100%;border:1px solid var(--line);border-radius:11px;background:#091525;color:var(--txt);padding:12px;font:12px/1.7 monospace" placeholder="الصق أسطر السجل هنا..."></textarea></div>
 <button class="primary" id="analyzeLogs">حلّل السجلات محليًا</button>
 <div class="result" id="logResult" aria-live="polite">لم يتم تحليل أي سجلات بعد.</div>
+<div class="panel" style="margin-top:12px"><h3 style="font-size:14px;margin:0 0 8px">الرسم الزمني — حالات الفشل في الدقيقة</h3><canvas id="minuteChart" height="190" style="width:100%;height:190px;display:block"></canvas><p class="muted">يعرض أعلى 10 دقائق حسب عدد حالات الفشل ذات التوقيت القابل للقراءة.</p></div>
+<div class="panel" style="margin-top:12px"><h3 style="font-size:14px;margin:0 0 8px">أكثر المصادر تكرارًا</h3><canvas id="sourceChart" height="190" style="width:100%;height:190px;display:block"></canvas><p class="muted">يعرض أعلى 8 عناوين مصادر في السجلات الملصوقة.</p></div>
 <button class="secondary" id="exportLogs" disabled>تصدير تقرير السجلات</button>
 <p class="muted">ملاحظة: تختلف صيغة السجلات حسب إصدار RouterOS وإعدادات التسجيل. قد لا يمكن استخراج عنوان المصدر من كل سطر. التحليل مؤشر مساعد وليس إثباتًا قاطعًا على هجوم.</p>
 </div>
 </section>
-<p class="footer">مشروع تجريبي تعليمي • destatoraa • V0.7</p>
+<p class="footer">مشروع تجريبي تعليمي • destatoraa • V0.8</p>
 </div>
 <script>
 const $=id=>document.getElementById(id);
@@ -215,7 +217,32 @@ $('analyzeLogs').addEventListener('click',()=>{
  const minuteTop=minuteRows.slice(0,5).map(x=>'<li>'+new Date(x.time).toLocaleString('ar-EG')+': '+x.count+' حالات فشل</li>').join('');
  $('logResult').innerHTML='<b>ملخص التحليل المحلي — V0.7</b><br>عدد الأسطر: <b>'+lines.length+'</b><br>أسطر فشل الدخول المطابقة: <b>'+failures.length+'</b><br>مصادر ظهرت: <b>'+ranked.length+'</b><br>أسطر لها توقيت قابل للقراءة: <b>'+timedCount+'</b><br>مصادر لديها 5 حالات أو أكثر إجمالًا: <b class="'+(suspicious.length?'danger':'good')+'">'+suspicious.length+'</b><hr style="border-color:#263852"><b>تكرار سريع من نفس المصدر (5 خلال 60 ثانية)</b><ul>'+(burstRows||'<li>لم تظهر حالة تطابق هذا المؤشر في السجلات المدخلة.</li>')+'</ul><b>أعلى دقائق من حيث عدد حالات الفشل (10 أو أكثر)</b><ul>'+(minuteTop||'<li>لا توجد بيانات زمنية كافية أو لم تظهر ذروة بهذا الحد.</li>')+'</ul><b>مصادر مختلفة في الدقيقة نفسها:</b> '+distributed.length+' دقيقة تجاوزت 10 حالات فشل إجمالًا.<br>'+(ranked.length?'<div style="overflow:auto;margin-top:10px"><table style="width:100%;border-collapse:collapse;text-align:right"><tr><th>المصدر</th><th>عدد حالات الفشل</th><th>مؤشر</th></tr>'+rows+'</table></div>':'')+'<br><span class="muted">الحدود 5/60 ثانية و10/دقيقة مؤشرات فرز أولية قابلة للتعديل وليست دليلًا قاطعًا على هجوم. التوقيت يُقرأ من الصيغ الشائعة وقد لا يطابق كل إعدادات RouterOS.</span>';
  $('exportLogs').disabled=false;
+
+ renderLogCharts(lastLogReport);
 });
+function drawLogBarChart(canvasId,items,labelFn){
+ const canvas=$(canvasId);if(!canvas)return;
+ const width=Math.max(280,canvas.clientWidth||320),height=190,dpr=window.devicePixelRatio||1;
+ canvas.width=width*dpr;canvas.height=height*dpr;
+ const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,width,height);
+ const pad={l:12,r:12,t:12,b:54},plotW=width-pad.l-pad.r,plotH=height-pad.t-pad.b;
+ ctx.font='11px system-ui';ctx.textAlign='center';ctx.fillStyle='#9eb0c9';
+ if(!items.length){ctx.fillText('لا توجد بيانات كافية للرسم',width/2,height/2);return;}
+ const max=Math.max(1,...items.map(x=>x.value)),gap=7,bw=Math.max(8,(plotW-gap*(items.length-1))/items.length);
+ items.forEach((item,i)=>{
+  const x=pad.l+i*(bw+gap),barH=(item.value/max)*(plotH-18),y=pad.t+plotH-barH;
+  ctx.fillStyle='#54d6a0';ctx.fillRect(x,y,bw,barH);
+  ctx.fillStyle='#edf4ff';ctx.fillText(String(item.value),x+bw/2,Math.max(10,y-4));
+  ctx.save();ctx.translate(x+bw/2,pad.t+plotH+9);ctx.rotate(-0.48);ctx.textAlign='right';ctx.fillStyle='#9eb0c9';ctx.fillText(labelFn(item.label),0,0);ctx.restore();
+ });
+}
+function renderLogCharts(report){
+ const mins=report.minuteRows.slice().sort((a,b)=>b.count-a.count).slice(0,10).map(x=>({label:new Date(x.time).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}),value:x.count}));
+ const sources=report.ranked.filter(x=>x[0]!=='عنوان غير متاح').slice(0,8).map(x=>({label:x[0],value:x[1]}));
+ drawLogBarChart('minuteChart',mins,x=>x);
+ drawLogBarChart('sourceChart',sources,x=>x.length>13?x.slice(0,13)+'…':x);
+}
+
 $('exportLogs').addEventListener('click',()=>{
  if(!lastLogReport)return;
  const r=lastLogReport;
