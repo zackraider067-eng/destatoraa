@@ -21,7 +21,7 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="logo">M</div><div><h1>MikroTik Security Tester</h1><p>محاكي محلي لمقاومة تخمين كلمات المرور • الإصدار 1.0</p></div></header>
+<header class="top"><div class="logo">M</div><div><h1>MikroTik Security Tester</h1><p>محاكي محلي لمقاومة تخمين كلمات المرور • الإصدار 1.1</p></div></header>
 <div class="notice"><b>وضع آمن:</b> المحاكي يحسب عدد المحاولات والزمن نظريًا داخل الهاتف فقط. لا يرسل أي طلبات تسجيل دخول إلى الراوتر ولا يجرب كلمات مرور عليه.</div>
 <nav class="tabs">
 <button class="tab active" data-tab="dashboard">لوحة النتائج</button><button class="tab" data-tab="sim">المحاكي</button><button class="tab" data-tab="audit">فحص الحماية</button><button class="tab" data-tab="about">عن التطبيق</button><button class="tab" data-tab="logs">تحليل السجلات</button>
@@ -34,7 +34,7 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 <div class="stat"><small>تغطية مراجعة الحماية</small><strong id="dashCoverage">لم تبدأ</strong></div>
 <div class="stat"><small>حالة المحاكاة</small><strong id="dashSimulation">لم تُحسب</strong></div>
 <div class="stat"><small>حالات فشل الدخول المرصودة</small><strong id="dashFailures">لا توجد بيانات</strong></div>
-<div class="stat"><small>مصادر ذات تكرار سريع</small><strong id="dashBursts">لا توجد بيانات</strong></div>
+<div class="stat"><small>عناوين IP ذات تكرار سريع</small><strong id="dashBursts">لا توجد بيانات</strong></div>
 </div>
 <div class="result" id="dashSummary" aria-live="polite">ابدأ بمراجعة البنود أو تحليل سجلاتك لتظهر النتائج هنا.</div>
 <button class="primary" id="exportCombined">تصدير التقرير الموحد</button>
@@ -96,7 +96,7 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 </div>
 </section>
 <section id="about" class="hidden">
-<div class="panel"><h2>ℹ️ معلومات الإصدار</h2><ul><li>الإصدار: 1.0 — لوحة موحدة تجمع المحاكاة ومراجعة الحماية وتحليل السجلات.</li><li>نطاق أسماء المستخدمين الافتراضي: 1 إلى 9,999,999,999.</li><li>نطاق كلمات المرور: 01 إلى 100 (100 احتمال).</li><li>لا يتم تخزين أو إرسال بيانات دخول.</li><li>لا يوجد اتصال مباشر بالراوتر في هذا الإصدار.</li><li>أضيفت بنود مراجعة خاصة بأمان كروت Hotspot ومراقبة محاولات الدخول.</li></ul></div>
+<div class="panel"><h2>ℹ️ معلومات الإصدار</h2><ul><li>الإصدار: 1.1 — لوحة موحدة تجمع المحاكاة ومراجعة الحماية وتحليل السجلات.</li><li>نطاق أسماء المستخدمين الافتراضي: 1 إلى 9,999,999,999.</li><li>نطاق كلمات المرور: 01 إلى 100 (100 احتمال).</li><li>لا يتم تخزين أو إرسال بيانات دخول.</li><li>لا يوجد اتصال مباشر بالراوتر في هذا الإصدار.</li><li>أضيفت بنود مراجعة خاصة بأمان كروت Hotspot ومراقبة محاولات الدخول.</li></ul></div>
 </section>
 <section id="logs" class="hidden">
 <div class="panel">
@@ -106,12 +106,12 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 <button class="primary" id="analyzeLogs">حلّل السجلات محليًا</button>
 <div class="result" id="logResult" aria-live="polite">لم يتم تحليل أي سجلات بعد.</div>
 <div class="panel" style="margin-top:12px"><h3 style="font-size:14px;margin:0 0 8px">الرسم الزمني — حالات الفشل في الدقيقة</h3><canvas id="minuteChart" height="190" style="width:100%;height:190px;display:block"></canvas><p class="muted">يعرض أعلى 10 دقائق حسب عدد حالات الفشل ذات التوقيت القابل للقراءة.</p></div>
-<div class="panel" style="margin-top:12px"><h3 style="font-size:14px;margin:0 0 8px">أكثر المصادر تكرارًا</h3><canvas id="sourceChart" height="190" style="width:100%;height:190px;display:block"></canvas><p class="muted">يعرض أعلى 8 عناوين مصادر في السجلات الملصوقة.</p></div>
+<div class="panel" style="margin-top:12px"><h3 style="font-size:14px;margin:0 0 8px">أكثر المصادر تكرارًا</h3><canvas id="sourceChart" height="190" style="width:100%;height:190px;display:block"></canvas><p class="muted">يعرض أعلى 8 عناوين IP مستخرجة من السجلات الملصوقة.</p></div>
 <button class="secondary" id="exportLogs" disabled>تصدير تقرير السجلات</button>
 <p class="muted">ملاحظة: تختلف صيغة السجلات حسب إصدار RouterOS وإعدادات التسجيل. قد لا يمكن استخراج عنوان المصدر من كل سطر. التحليل مؤشر مساعد وليس إثباتًا قاطعًا على هجوم.</p>
 </div>
 </section>
-<p class="footer">مشروع تجريبي تعليمي • destatoraa • V1.0</p>
+<p class="footer">مشروع تجريبي تعليمي • destatoraa • V1.1</p>
 </div>
 <script>
 const $=id=>document.getElementById(id);
@@ -120,7 +120,7 @@ const MAX_USERS = 9999999999n;
 const PASSWORDS_PER_USER = 100n;
 const TOTAL_COMBINATIONS = MAX_USERS * PASSWORDS_PER_USER;
 $('spaceSize').textContent = TOTAL_COMBINATIONS.toLocaleString('en-US');
-$('averageAttempts').textContent = (TOTAL_COMBINATIONS / 2n).toLocaleString('en-US');
+$('averageAttempts').textContent = (Number(TOTAL_COMBINATIONS + 1n) / 2).toLocaleString('en-US');
 document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{
  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===btn));
  ['dashboard','sim','audit','about','logs'].forEach(id=>$(id).classList.toggle('hidden',id!==btn.dataset.tab));
@@ -140,7 +140,7 @@ $('calculate').addEventListener('click',()=>{
  const count=Number(attempts);
  const pure=count/rate;
  const total=pure+(count>0?(count-1)*delay/1000:0);
- const averageCount=Number(TOTAL_COMBINATIONS/2n);
+ const averageCount=Number(TOTAL_COMBINATIONS+1n)/2;
  const averageSeconds=averageCount/rate+(averageCount-1)*delay/1000;
  const fullCount=Number(TOTAL_COMBINATIONS);
  const fullSeconds=fullCount/rate+(fullCount-1)*delay/1000;
@@ -193,9 +193,9 @@ let lastLogReport=null;
 function safeText(value){return String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
 function parseLogTime(line){
  const iso=line.match(/\b(20\d{2})-(\d{1,2})-(\d{1,2})[ T](\d{1,2}):(\d{2}):(\d{2})\b/);
- if(iso){const d=new Date(+iso[1],+iso[2]-1,+iso[3],+iso[4],+iso[5],+iso[6]);return Number.isNaN(d.getTime())?null:d.getTime();}
+ if(iso){const d=new Date(+iso[1],+iso[2]-1,+iso[3],+iso[4],+iso[5],+iso[6]);if(d.getFullYear()!==+iso[1]||d.getMonth()!==+iso[2]-1||d.getDate()!==+iso[3]||d.getHours()!==+iso[4]||d.getMinutes()!==+iso[5]||d.getSeconds()!==+iso[6])return null;return d.getTime();}
  const ros=line.match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\/(\d{1,2})\/(20\d{2})\s+(\d{1,2}):(\d{2}):(\d{2})\b/i);
- if(ros){const months={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};const d=new Date(+ros[3],months[ros[1].toLowerCase()],+ros[2],+ros[4],+ros[5],+ros[6]);return Number.isNaN(d.getTime())?null:d.getTime();}
+ if(ros){const months={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};const d=new Date(+ros[3],months[ros[1].toLowerCase()],+ros[2],+ros[4],+ros[5],+ros[6]);if(d.getFullYear()!==+ros[3]||d.getMonth()!==months[ros[1].toLowerCase()]||d.getDate()!==+ros[2]||d.getHours()!==+ros[4]||d.getMinutes()!==+ros[5]||d.getSeconds()!==+ros[6])return null;return d.getTime();}
  return null;
 }
 $('analyzeLogs').addEventListener('click',()=>{
@@ -233,7 +233,7 @@ $('analyzeLogs').addEventListener('click',()=>{
  const rows=ranked.slice(0,10).map(([ip,count])=>'<tr><td>'+safeText(ip)+'</td><td>'+count+'</td><td>'+(count>=5?'<span class="danger">راجع المصدر</span>':'<span class="good">عدد محدود</span>')+'</td></tr>').join('');
  const burstRows=bursts.map(x=>'<li>'+safeText(x.ip)+': '+x.count+' حالات خلال نافذة 60 ثانية</li>').join('');
  const minuteTop=minuteRows.slice(0,5).map(x=>'<li>'+new Date(x.time).toLocaleString('ar-EG')+': '+x.count+' حالات فشل</li>').join('');
- $('logResult').innerHTML='<b>ملخص التحليل المحلي — V0.9</b><br>عدد الأسطر: <b>'+lines.length+'</b><br>أسطر فشل الدخول المطابقة: <b>'+failures.length+'</b><br>مصادر ظهرت: <b>'+ranked.length+'</b><br>أسطر لها توقيت قابل للقراءة: <b>'+timedCount+'</b><br>مصادر لديها 5 حالات أو أكثر إجمالًا: <b class="'+(suspicious.length?'danger':'good')+'">'+suspicious.length+'</b><hr style="border-color:#263852"><b>تكرار سريع من نفس المصدر (5 خلال 60 ثانية)</b><ul>'+(burstRows||'<li>لم تظهر حالة تطابق هذا المؤشر في السجلات المدخلة.</li>')+'</ul><b>أعلى دقائق من حيث عدد حالات الفشل (10 أو أكثر)</b><ul>'+(minuteTop||'<li>لا توجد بيانات زمنية كافية أو لم تظهر ذروة بهذا الحد.</li>')+'</ul><b>مصادر مختلفة في الدقيقة نفسها:</b> '+distributed.length+' دقيقة تجاوزت 10 حالات فشل إجمالًا.<br>'+(ranked.length?'<div style="overflow:auto;margin-top:10px"><table style="width:100%;border-collapse:collapse;text-align:right"><tr><th>المصدر</th><th>عدد حالات الفشل</th><th>مؤشر</th></tr>'+rows+'</table></div>':'')+'<br><span class="muted">الحدود 5/60 ثانية و10/دقيقة مؤشرات فرز أولية قابلة للتعديل وليست دليلًا قاطعًا على هجوم. التوقيت يُقرأ من الصيغ الشائعة وقد لا يطابق كل إعدادات RouterOS.</span>';
+ $('logResult').innerHTML='<b>ملخص التحليل المحلي — V0.9</b><br>عدد الأسطر: <b>'+lines.length+'</b><br>أسطر فشل الدخول المطابقة: <b>'+failures.length+'</b><br>عناوين IP مستخرجة: <b>'+ranked.length+'</b><br>أسطر لها توقيت قابل للقراءة: <b>'+timedCount+'</b><br>عناوين IP لديها 5 حالات أو أكثر إجمالًا: <b class="'+(suspicious.length?'danger':'good')+'">'+suspicious.length+'</b><hr style="border-color:#263852"><b>تكرار سريع لنفس عنوان IP (5 خلال 60 ثانية)</b><ul>'+(burstRows||'<li>لم تظهر حالة تطابق هذا المؤشر في السجلات المدخلة.</li>')+'</ul><b>أعلى دقائق من حيث عدد حالات الفشل (10 أو أكثر)</b><ul>'+(minuteTop||'<li>لا توجد بيانات زمنية كافية أو لم تظهر ذروة بهذا الحد.</li>')+'</ul><b>دقائق بها 10 حالات فشل أو أكثر إجمالًا:</b> '+distributed.length+' دقيقة تجاوزت 10 حالات فشل إجمالًا.<br>'+(ranked.length?'<div style="overflow:auto;margin-top:10px"><table style="width:100%;border-collapse:collapse;text-align:right"><tr><th>المصدر</th><th>عدد حالات الفشل</th><th>مؤشر</th></tr>'+rows+'</table></div>':'')+'<br><span class="muted">الحدود 5/60 ثانية و10/دقيقة مؤشرات فرز أولية قابلة للتعديل وليست دليلًا قاطعًا على هجوم. التوقيت يُقرأ من الصيغ الشائعة وقد لا يطابق كل إعدادات RouterOS.</span>';
  $('exportLogs').disabled=false;
 
  renderLogCharts(lastLogReport);
@@ -255,6 +255,7 @@ function drawLogBarChart(canvasId,items,labelFn){
   ctx.save();ctx.translate(x+bw/2,pad.t+plotH+9);ctx.rotate(-0.48);ctx.textAlign='right';ctx.fillStyle='#9eb0c9';ctx.fillText(labelFn(item.label),0,0);ctx.restore();
  });
 }
+window.addEventListener('resize',()=>{if(lastLogReport)renderLogCharts(lastLogReport);});
 function renderLogCharts(report){
  const mins=report.minuteRows.slice().sort((a,b)=>b.count-a.count).slice(0,10).map(x=>({label:new Date(x.time).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}),value:x.count}));
  const sources=report.ranked.filter(x=>x[0]!=='عنوان غير متاح').slice(0,8).map(x=>({label:x[0],value:x[1]}));
@@ -265,9 +266,9 @@ function renderLogCharts(report){
 $('exportLogs').addEventListener('click',()=>{
  if(!lastLogReport)return;
  const r=lastLogReport;
- const report=['MikroTik local log review V0.9','Generated: '+r.createdAt,'Lines: '+r.totalLines,'Matched failure lines: '+r.failures,'Timed failure lines: '+r.timedCount,'Unique sources: '+r.ranked.length,'Sources with >=5 failures: '+r.suspicious.length,'Same-source bursts (>=5 in 60 sec):',...r.bursts.map(x=>x.ip+': '+x.count),'Minute peaks (>=10):',...r.distributed.map(x=>new Date(x.time).toLocaleString()+' : '+x.count),'Source counts:',...r.ranked.map(([ip,count])=>ip+': '+count),'','Local analysis only; no router connection or login attempts were made.'];
+ const report=['MikroTik local log review V1.1','Generated: '+r.createdAt,'Lines: '+r.totalLines,'Matched failure lines: '+r.failures,'Timed failure lines: '+r.timedCount,'Unique sources: '+r.ranked.length,'Sources with >=5 failures: '+r.suspicious.length,'Same-source bursts (>=5 in 60 sec):',...r.bursts.map(x=>x.ip+': '+x.count),'Minute peaks (>=10):',...r.distributed.map(x=>new Date(x.time).toLocaleString()+' : '+x.count),'Source counts:',...r.ranked.map(([ip,count])=>ip+': '+count),'','Local analysis only; no router connection or login attempts were made.'];
  const blob=new Blob([report.join('\n')],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
- a.href=url;a.download='mikrotik-log-review-v09.txt';a.click();URL.revokeObjectURL(url);
+ a.href=url;a.download='mikrotik-log-review-v11.txt';a.click();URL.revokeObjectURL(url);
 });
 const auditPriorities=[
  {title:'تغيير كلمة مرور admin الافتراضية أو تعطيل الحساب الافتراضي',weight:10},
@@ -300,12 +301,12 @@ function updateDashboard(){
 }
 $('exportCombined').addEventListener('click',()=>{
  const boxes=[...document.querySelectorAll('#checks input')],done=boxes.filter(x=>x.checked).length;
- const lines=['MikroTik Security Tester - Unified Report V1.0','Generated: '+new Date().toLocaleString(),'','SELF-ASSESSMENT','Confirmed controls: '+done+'/'+boxes.length,'Review coverage: '+Math.round(done/boxes.length*100)+'%','',...auditPriorities.map((x,i)=>(boxes[i]?.checked?'CONFIRMED: ':'NOT CONFIRMED: ')+x.title),'','SIMULATION'];
+ const lines=['MikroTik Security Tester - Unified Report V1.1','Generated: '+new Date().toLocaleString(),'','SELF-ASSESSMENT','Confirmed controls: '+done+'/'+boxes.length,'Review coverage: '+Math.round(done/boxes.length*100)+'%','',...auditPriorities.map((x,i)=>(boxes[i]?.checked?'CONFIRMED: ':'NOT CONFIRMED: ')+x.title),'','SIMULATION'];
  if(lastReport){lines.push('Simulation completed: yes','Target user index: '+lastReport.user,'Password index: '+lastReport.password,'Theoretical attempt position: '+lastReport.attempts,'Assumed local rate: '+lastReport.rate,'Estimated mathematical time: '+duration(lastReport.seconds));}else lines.push('Simulation completed: no');
  lines.push('','LOG REVIEW');
  if(lastLogReport){lines.push('Matched failure lines: '+lastLogReport.failures,'Timed failure lines: '+lastLogReport.timedCount,'Unique source entries: '+lastLogReport.ranked.length,'Same-source bursts (>=5 in 60 sec): '+lastLogReport.bursts.length,'Minute peaks (>=10 failures): '+lastLogReport.distributed.length,...lastLogReport.ranked.map(([ip,count])=>ip+': '+count));}else lines.push('Log review completed: no');
  lines.push('','IMPORTANT: This is a local self-assessment and log summary, not an automated router scan or proof of security. No login attempts were made.');
- const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='mikrotik-unified-security-report-v10.txt';a.click();URL.revokeObjectURL(url);
+ const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='mikrotik-unified-security-report-v11.txt';a.click();URL.revokeObjectURL(url);
 });
 function updateAudit(){
  const boxes=[...document.querySelectorAll('#checks input')],done=boxes.filter(x=>x.checked).length,total=boxes.length,pct=Math.round(done/total*100);
@@ -318,9 +319,9 @@ function updateAudit(){
 }
 $('exportAudit').addEventListener('click',()=>{
  const boxes=[...document.querySelectorAll('#checks input')],done=boxes.filter(x=>x.checked).length;
- const lines=['MikroTik Security Tester - Self Assessment V0.9','Generated: '+new Date().toLocaleString(),'Review coverage: '+Math.round(done/boxes.length*100)+'%','Confirmed controls: '+done+'/'+boxes.length,'','Control status:',...auditPriorities.map((x,i)=>(boxes[i]?.checked?'CONFIRMED: ':'NOT CONFIRMED: ')+x.title),'','This is a self-assessment, not an automated router scan or proof of security.'];
+ const lines=['MikroTik Security Tester - Self Assessment V1.1','Generated: '+new Date().toLocaleString(),'Review coverage: '+Math.round(done/boxes.length*100)+'%','Confirmed controls: '+done+'/'+boxes.length,'','Control status:',...auditPriorities.map((x,i)=>(boxes[i]?.checked?'CONFIRMED: ':'NOT CONFIRMED: ')+x.title),'','This is a self-assessment, not an automated router scan or proof of security.'];
  if(lastLogReport){lines.push('','Log review summary:','Matched failures: '+lastLogReport.failures,'Timed failures: '+lastLogReport.timedCount,'Sources: '+lastLogReport.ranked.length,'Same-source bursts: '+lastLogReport.bursts.length,'Minute peaks: '+lastLogReport.distributed.length);}
- const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='mikrotik-security-assessment-v10.txt';a.click();URL.revokeObjectURL(url);
+ const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='mikrotik-security-assessment-v11.txt';a.click();URL.revokeObjectURL(url);
 });
 document.querySelectorAll('#checks input').forEach(x=>x.addEventListener('change',updateAudit));
 updateAudit();
