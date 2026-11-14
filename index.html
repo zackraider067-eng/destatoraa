@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1220">
+<meta name="description" content="محاكي محلي لتقدير مقاومة كلمات المرور ومراجعة إعدادات أمان MikroTik">
+<link rel="manifest" href="./manifest.json">
+<title>MikroTik Security Tester</title>
+<style>
+:root{color-scheme:dark;--bg:#08111f;--panel:#111d30;--panel2:#17263c;--line:#263852;--txt:#edf4ff;--muted:#9eb0c9;--accent:#54d6a0;--blue:#67a9ff;--warn:#ffc66d;--red:#ff7d86}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0%,#17304a 0,#08111f 45%);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--txt);min-height:100vh}
+.wrap{max-width:760px;margin:auto;padding:18px 14px 40px}.top{display:flex;align-items:center;gap:12px;margin:6px 0 20px}.logo{width:46px;height:46px;border-radius:15px;background:linear-gradient(135deg,#54d6a0,#2776c8);display:grid;place-items:center;font-size:23px;color:#06121d;font-weight:900}.top h1{font-size:19px;margin:0}.top p{font-size:12px;color:var(--muted);margin:4px 0 0}
+.notice{border:1px solid #725b2d;background:#2b2418;color:#ffe2a8;padding:12px;border-radius:14px;font-size:12px;line-height:1.7;margin-bottom:15px}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:14px 0}.tab{border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:11px 5px;border-radius:12px;font-weight:700}.tab.active{background:#173d3b;color:#baf8dd;border-color:#286f5a}
+.panel{background:linear-gradient(160deg,var(--panel),#0e192a);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 10px 28px #0002}.panel h2{font-size:16px;margin:0 0 12px}.muted{color:var(--muted);font-size:12px;line-height:1.7}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:flex;flex-direction:column;gap:6px;margin:10px 0}.field label{font-size:12px;color:var(--muted)}input,select{width:100%;border:1px solid var(--line);border-radius:11px;background:#091525;color:var(--txt);padding:12px;font-size:15px;outline:none}input:focus,select:focus{border-color:var(--blue)}
+button{border:0;border-radius:12px;padding:12px 14px;font-weight:800;font-size:14px;cursor:pointer}.primary{background:var(--accent);color:#062018;width:100%;margin-top:8px}.secondary{background:#20324c;color:#dceaff;width:100%;margin-top:8px}.statgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.stat{background:var(--panel2);border:1px solid var(--line);border-radius:13px;padding:12px}.stat small{color:var(--muted);display:block;font-size:11px}.stat strong{display:block;font-size:18px;margin-top:5px;overflow-wrap:anywhere}.result{background:#0a1727;border:1px dashed #3c5879;border-radius:13px;padding:13px;margin-top:12px;line-height:1.8;font-size:13px}.good{color:var(--accent)}.warn{color:var(--warn)}.danger{color:var(--red)}.bar{height:9px;background:#26364d;border-radius:20px;overflow:hidden;margin:10px 0}.bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#2776c8,#54d6a0);transition:width .2s}
+ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;line-height:1.6}.hidden{display:none}.footer{text-align:center;color:var(--muted);font-size:11px;margin-top:22px}
+@media(max-width:420px){.wrap{padding:14px 11px}.grid{gap:7px}.stat strong{font-size:16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="logo">M</div><div><h1>MikroTik Security Tester</h1><p>محاكي محلي لمقاومة تخمين كلمات المرور • الإصدار 0.1</p></div></header>
+<div class="notice"><b>وضع آمن:</b> المحاكي يحسب عدد المحاولات والزمن نظريًا داخل الهاتف فقط. لا يرسل أي طلبات تسجيل دخول إلى الراوتر ولا يجرب كلمات مرور عليه.</div>
+<nav class="tabs">
+<button class="tab active" data-tab="sim">المحاكي</button><button class="tab" data-tab="audit">فحص الحماية</button><button class="tab" data-tab="about">عن التطبيق</button>
+</nav>
+<section id="sim">
+<div class="panel">
+<h2>🎯 إعداد الحساب التجريبي</h2>
+<p class="muted">نستخدم أرقامًا افتراضية ضمن النطاق الذي حددته. ترتيب المحاكاة: أسماء المستخدمين تصاعديًا، ولكل اسم 100 كلمة مرور.</p>
+<div class="grid">
+<div class="field"><label for="targetUser">رقم اسم المستخدم المستهدف</label><input id="targetUser" type="number" min="1" max="9999999999" value="2500" inputmode="numeric"></div>
+<div class="field"><label for="targetPass">رقم كلمة المرور المستهدفة</label><input id="targetPass" type="number" min="1" max="100" value="37" inputmode="numeric"></div>
+</div>
+<div class="field"><label for="rate">معدل المحاولات الافتراضي في الثانية</label><input id="rate" type="number" min="0.01" max="1000000000" step="any" value="5" inputmode="decimal"></div>
+<div class="field"><label for="delay">تأخير افتراضي بين المحاولات (مللي ثانية)</label><select id="delay"><option value="0">0 ms — دون تأخير</option><option value="250">250 ms</option><option value="1000" selected>1000 ms — ثانية</option><option value="5000">5000 ms — 5 ثوانٍ</option><option value="30000">30000 ms — 30 ثانية</option></select></div>
+<button class="primary" id="calculate">احسب الزمن التقديري</button>
+<div id="result" class="result" aria-live="polite">أدخل القيم ثم اضغط «احسب الزمن التقديري».</div>
+</div>
+<div class="panel">
+<h2>⚡ قياس سرعة الهاتف محليًا</h2>
+<p class="muted">اختبار حسابي قصير داخل المتصفح لقياس سرعة تنفيذ عمليات بسيطة. لا يتصل بالشبكة ولا يختبر الراوتر.</p>
+<button class="secondary" id="benchmark">ابدأ القياس المحلي</button>
+<div class="result" id="benchResult">لم يتم القياس بعد.</div>
+</div>
+</section>
+<section id="audit" class="hidden">
+<div class="panel"><h2>🛡️ قائمة مراجعة أمان MikroTik</h2><p class="muted">علّم البنود التي راجعتها في جهازك. هذه قائمة إرشادية ولا تفحص الجهاز تلقائيًا.</p>
+<div id="checks">
+<label class="field"><span><input type="checkbox"> تم تغيير كلمة مرور admin الافتراضية أو تعطيل الحساب الافتراضي</span></label>
+<label class="field"><span><input type="checkbox"> تم إنشاء مستخدم إداري باسم غير متوقع وبصلاحيات محدودة</span></label>
+<label class="field"><span><input type="checkbox"> خدمات الإدارة غير الضرورية معطلة</span></label>
+<label class="field"><span><input type="checkbox"> الوصول الإداري مسموح من عناوين موثوقة فقط</span></label>
+<label class="field"><span><input type="checkbox"> تم تحديث RouterOS إلى إصدار مدعوم ومستقر</span></label>
+<label class="field"><span><input type="checkbox"> تم تفعيل قواعد Firewall لحماية خدمات الإدارة</span></label>
+<label class="field"><span><input type="checkbox"> تم حفظ نسخة احتياطية آمنة من الإعدادات</span></label>
+</div>
+<div class="bar"><span id="auditBar"></span></div><p class="muted" id="auditCount">0 من 7 بنود مكتملة</p>
+</div>
+</section>
+<section id="about" class="hidden">
+<div class="panel"><h2>ℹ️ معلومات الإصدار</h2><ul><li>الإصدار: 0.1 — واجهة أولية ومحاكي حسابي محلي.</li><li>نطاق أسماء المستخدمين الافتراضي: 1 إلى 9,999,999,999.</li><li>نطاق كلمات المرور الافتراضي: 1 إلى 100.</li><li>لا يتم تخزين أو إرسال بيانات دخول.</li><li>لا يوجد اتصال مباشر بالراوتر في هذا الإصدار.</li></ul></div>
+</section>
+<p class="footer">مشروع تجريبي تعليمي • destatoraa • V0.1</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{
+ document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===btn));
+ ['sim','audit','about'].forEach(id=>$(id).classList.toggle('hidden',id!==btn.dataset.tab));
+}));
+function fmt(n){return new Intl.NumberFormat('en-US',{maximumFractionDigits:2}).format(n)}
+function duration(seconds){
+ if(!Number.isFinite(seconds))return 'أكثر من نطاق الحساب';
+ if(seconds<1)return (seconds*1000).toFixed(2)+' مللي ثانية';
+ const units=[['سنة',31557600],['يوم',86400],['ساعة',3600],['دقيقة',60],['ثانية',1]];
+ let left=seconds,out=[];for(const [name,size] of units){const v=Math.floor(left/size);if(v){out.push(v+' '+name);left-=v*size;}if(out.length===2)break;}return out.join(' و ')||'أقل من ثانية';
+}
+$('calculate').addEventListener('click',()=>{
+ const u=Number($('targetUser').value),p=Number($('targetPass').value),rate=Number($('rate').value),delay=Number($('delay').value);
+ if(!Number.isInteger(u)||u<1||u>9999999999||!Number.isInteger(p)||p<1||p>100||!Number.isFinite(rate)||rate<=0){$('result').innerHTML='<span class="danger">راجع المدخلات: اسم المستخدم من 1 إلى 9,999,999,999، وكلمة المرور من 1 إلى 100، والمعدل أكبر من صفر.</span>';return;}
+ const attempts=(BigInt(u)-1n)*100n+BigInt(p);
+ const count=Number(attempts);
+ const pure=count/rate;
+ const total=pure+(count>0?(count-1)*delay/1000:0);
+ $('result').innerHTML='<b class="good">نتيجة المحاكاة الحسابية</b><br>عدد المحاولات حتى الحساب الافتراضي: <b>'+attempts.toLocaleString('en-US')+'</b><br>زمن الحساب دون تأخير: <b>'+duration(pure)+'</b><br>زمن الحساب مع التأخير المحدد: <b>'+duration(total)+'</b><br><span class="muted">هذه أرقام تقديرية مبنية على المعدل الذي أدخلته، وليست قياسًا لسرعة تسجيل الدخول الفعلية على MikroTik.</span>';
+});
+$('benchmark').addEventListener('click',()=>{
+ const start=performance.now();let x=0;for(let i=0;i<1500000;i++)x=(x+i)%1000003;
+ const elapsed=(performance.now()-start)/1000;const rate=1500000/elapsed;
+ $('benchResult').innerHTML='اكتمل القياس المحلي: <b class="good">'+fmt(rate)+' عملية حسابية/ثانية</b><br><span class="muted">هذا اختبار أداء JavaScript للهاتف، وليس معدل محاولات شبكة أو تسجيل دخول. يمكنك استخدامه للمقارنة بين الأجهزة فقط.</span>';
+});
+function updateAudit(){const boxes=[...document.querySelectorAll('#checks input')],done=boxes.filter(x=>x.checked).length;$('auditBar').style.width=(done/boxes.length*100)+'%';$('auditCount').textContent=done+' من '+boxes.length+' بنود مكتملة';}
+document.querySelectorAll('#checks input').forEach(x=>x.addEventListener('change',updateAudit));
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
+</body>
+</html>
