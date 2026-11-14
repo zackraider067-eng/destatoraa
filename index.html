@@ -105,7 +105,7 @@ $('spaceSize').textContent = TOTAL_COMBINATIONS.toLocaleString('en-US');
 $('averageAttempts').textContent = (TOTAL_COMBINATIONS / 2n).toLocaleString('en-US');
 document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{
  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===btn));
- ['sim','audit','about'].forEach(id=>$(id).classList.toggle('hidden',id!==btn.dataset.tab));
+ ['sim','audit','about','logs'].forEach(id=>$(id).classList.toggle('hidden',id!==btn.dataset.tab));
 }));
 function fmt(n){return new Intl.NumberFormat('en-US',{maximumFractionDigits:2}).format(n)}
 function duration(seconds){
