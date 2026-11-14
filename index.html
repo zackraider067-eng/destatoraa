@@ -21,7 +21,7 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="logo">M</div><div><h1>MikroTik Security Tester</h1><p>محاكي محلي لمقاومة تخمين كلمات المرور • الإصدار 0.6</p></div></header>
+<header class="top"><div class="logo">M</div><div><h1>MikroTik Security Tester</h1><p>محاكي محلي لمقاومة تخمين كلمات المرور • الإصدار 0.7</p></div></header>
 <div class="notice"><b>وضع آمن:</b> المحاكي يحسب عدد المحاولات والزمن نظريًا داخل الهاتف فقط. لا يرسل أي طلبات تسجيل دخول إلى الراوتر ولا يجرب كلمات مرور عليه.</div>
 <nav class="tabs">
 <button class="tab active" data-tab="sim">المحاكي</button><button class="tab" data-tab="audit">فحص الحماية</button><button class="tab" data-tab="about">عن التطبيق</button><button class="tab" data-tab="logs">تحليل السجلات</button>
@@ -93,7 +93,7 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 <p class="muted">ملاحظة: تختلف صيغة السجلات حسب إصدار RouterOS وإعدادات التسجيل. قد لا يمكن استخراج عنوان المصدر من كل سطر. التحليل مؤشر مساعد وليس إثباتًا قاطعًا على هجوم.</p>
 </div>
 </section>
-<p class="footer">مشروع تجريبي تعليمي • destatoraa • V0.6</p>
+<p class="footer">مشروع تجريبي تعليمي • destatoraa • V0.7</p>
 </div>
 <script>
 const $=id=>document.getElementById(id);
@@ -171,32 +171,57 @@ $('benchmark').addEventListener('click',()=>{
 });
 let lastLogReport=null;
 function safeText(value){return String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+function parseLogTime(line){
+ const iso=line.match(/\b(20\d{2})-(\d{1,2})-(\d{1,2})[ T](\d{1,2}):(\d{2}):(\d{2})\b/);
+ if(iso){const d=new Date(+iso[1],+iso[2]-1,+iso[3],+iso[4],+iso[5],+iso[6]);return Number.isNaN(d.getTime())?null:d.getTime();}
+ const ros=line.match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\/(\d{1,2})\/(20\d{2})\s+(\d{1,2}):(\d{2}):(\d{2})\b/i);
+ if(ros){const months={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};const d=new Date(+ros[3],months[ros[1].toLowerCase()],+ros[2],+ros[4],+ros[5],+ros[6]);return Number.isNaN(d.getTime())?null:d.getTime();}
+ return null;
+}
 $('analyzeLogs').addEventListener('click',()=>{
  const raw=$('logInput').value.trim();
  if(!raw){$('logResult').textContent='الصق سجلات نصية أولًا.';return;}
  const lines=raw.split(/\r?\n/).filter(Boolean);
  const failures=lines.filter(line=>/login failure|failed login|authentication failed|invalid password|auth.*fail/i.test(line));
- const ipCounts={};
- const samples=[];
+ const ipCounts={}, events=[], samples=[];
  for(const line of failures){
    const matches=line.match(/(?:\d{1,3}\.){3}\d{1,3}/g)||[];
    const ip=matches.find(v=>v.split('.').every(n=>Number(n)>=0&&Number(n)<=255))||'عنوان غير متاح';
    ipCounts[ip]=(ipCounts[ip]||0)+1;
+   const time=parseLogTime(line);
+   if(time!==null)events.push({ip,time,line:line.slice(0,220)});
    if(samples.length<8)samples.push({ip,line:line.slice(0,220)});
  }
  const ranked=Object.entries(ipCounts).sort((a,b)=>b[1]-a[1]);
- const suspicious=ranked.filter(([ip,count])=>count>=5);
+ const suspicious=ranked.filter(([ip,count])=>ip!=='عنوان غير متاح'&&count>=5);
  const noIp=ipCounts['عنوان غير متاح']||0;
- lastLogReport={totalLines:lines.length,failures:failures.length,ranked,suspicious,samples,createdAt:new Date().toLocaleString('ar-EG')};
- const rows=ranked.slice(0,10).map(([ip,count])=>'<tr><td>'+safeText(ip)+'</td><td>'+count+'</td><td>'+(count>=5?'<span class="danger">متكرر — راجع المصدر</span>':'<span class="good">عدد محدود في النص</span>')+'</td></tr>').join('');
- $('logResult').innerHTML='<b>ملخص التحليل المحلي</b><br>عدد الأسطر: <b>'+lines.length+'</b><br>أسطر فشل الدخول المطابقة: <b>'+failures.length+'</b><br>مصادر ظهرت في السجلات: <b>'+ranked.length+'</b><br>مصادر لديها 5 حالات فشل أو أكثر في النص الملصوق: <b class="'+(suspicious.length?'danger':'good')+'">'+suspicious.length+'</b><br>أسطر لم يظهر بها عنوان IP قابل للاستخراج: <b>'+noIp+'</b>'+(ranked.length?'<div style="overflow:auto;margin-top:10px"><table style="width:100%;border-collapse:collapse;text-align:right"><tr><th>المصدر</th><th>عدد حالات الفشل</th><th>مؤشر</th></tr>'+rows+'</table></div>':'')+'<br><span class="muted">عتبة 5 مجرد علامة فرز أولية داخل النص المدخل، وليست حدًا أمنيًا عامًا. قد تتكرر الأسطر لأسباب تشغيلية أو بسبب أخطاء مستخدمين.</span>';
+ const sorted=events.slice().sort((a,b)=>a.time-b.time);
+ const perMinute={};
+ for(const e of sorted){const bucket=Math.floor(e.time/60000)*60000;perMinute[bucket]=(perMinute[bucket]||0)+1;}
+ const minuteRows=Object.entries(perMinute).map(([time,count])=>({time:Number(time),count})).sort((a,b)=>b.count-a.count);
+ const bursts=[];
+ const byIp={};
+ for(const e of sorted){if(!byIp[e.ip])byIp[e.ip]=[];byIp[e.ip].push(e.time);}
+ for(const [ip,times] of Object.entries(byIp)){
+   let left=0,best=0;
+   for(let right=0;right<times.length;right++){while(times[right]-times[left]>60000)left++;best=Math.max(best,right-left+1);}
+   if(ip!=='عنوان غير متاح'&&best>=5)bursts.push({ip,count:best});
+ }
+ const distributed=minuteRows.filter(x=>x.count>=10);
+ const timedCount=events.length;
+ lastLogReport={totalLines:lines.length,failures:failures.length,ranked,suspicious,samples,createdAt:new Date().toLocaleString('ar-EG'),timedCount,bursts,distributed,minuteRows};
+ const rows=ranked.slice(0,10).map(([ip,count])=>'<tr><td>'+safeText(ip)+'</td><td>'+count+'</td><td>'+(count>=5?'<span class="danger">راجع المصدر</span>':'<span class="good">عدد محدود</span>')+'</td></tr>').join('');
+ const burstRows=bursts.map(x=>'<li>'+safeText(x.ip)+': '+x.count+' حالات خلال نافذة 60 ثانية</li>').join('');
+ const minuteTop=minuteRows.slice(0,5).map(x=>'<li>'+new Date(x.time).toLocaleString('ar-EG')+': '+x.count+' حالات فشل</li>').join('');
+ $('logResult').innerHTML='<b>ملخص التحليل المحلي — V0.7</b><br>عدد الأسطر: <b>'+lines.length+'</b><br>أسطر فشل الدخول المطابقة: <b>'+failures.length+'</b><br>مصادر ظهرت: <b>'+ranked.length+'</b><br>أسطر لها توقيت قابل للقراءة: <b>'+timedCount+'</b><br>مصادر لديها 5 حالات أو أكثر إجمالًا: <b class="'+(suspicious.length?'danger':'good')+'">'+suspicious.length+'</b><hr style="border-color:#263852"><b>تكرار سريع من نفس المصدر (5 خلال 60 ثانية)</b><ul>'+(burstRows||'<li>لم تظهر حالة تطابق هذا المؤشر في السجلات المدخلة.</li>')+'</ul><b>أعلى دقائق من حيث عدد حالات الفشل (10 أو أكثر)</b><ul>'+(minuteTop||'<li>لا توجد بيانات زمنية كافية أو لم تظهر ذروة بهذا الحد.</li>')+'</ul><b>مصادر مختلفة في الدقيقة نفسها:</b> '+distributed.length+' دقيقة تجاوزت 10 حالات فشل إجمالًا.<br>'+(ranked.length?'<div style="overflow:auto;margin-top:10px"><table style="width:100%;border-collapse:collapse;text-align:right"><tr><th>المصدر</th><th>عدد حالات الفشل</th><th>مؤشر</th></tr>'+rows+'</table></div>':'')+'<br><span class="muted">الحدود 5/60 ثانية و10/دقيقة مؤشرات فرز أولية قابلة للتعديل وليست دليلًا قاطعًا على هجوم. التوقيت يُقرأ من الصيغ الشائعة وقد لا يطابق كل إعدادات RouterOS.</span>';
  $('exportLogs').disabled=false;
 });
 $('exportLogs').addEventListener('click',()=>{
  if(!lastLogReport)return;
- const report=['MikroTik local log review V0.6','Generated: '+lastLogReport.createdAt,'Lines: '+lastLogReport.totalLines,'Matched failure lines: '+lastLogReport.failures,'Sources: '+lastLogReport.ranked.length,'Sources with >=5 failures in pasted text: '+lastLogReport.suspicious.length,'','Counts:',...lastLogReport.ranked.map(([ip,count])=>ip+': '+count),'','No router connection or login attempts were made.'];
- const blob=new Blob([report.join('\\n')],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
- a.href=url;a.download='mikrotik-log-review-v06.txt';a.click();URL.revokeObjectURL(url);
+ const r=lastLogReport;
+ const report=['MikroTik local log review V0.7','Generated: '+r.createdAt,'Lines: '+r.totalLines,'Matched failure lines: '+r.failures,'Timed failure lines: '+r.timedCount,'Unique sources: '+r.ranked.length,'Sources with >=5 failures: '+r.suspicious.length,'Same-source bursts (>=5 in 60 sec):',...r.bursts.map(x=>x.ip+': '+x.count),'Minute peaks (>=10):',...r.distributed.map(x=>new Date(x.time).toLocaleString()+' : '+x.count),'Source counts:',...r.ranked.map(([ip,count])=>ip+': '+count),'','Local analysis only; no router connection or login attempts were made.'];
+ const blob=new Blob([report.join('\n')],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='mikrotik-log-review-v07.txt';a.click();URL.revokeObjectURL(url);
 });
 function updateAudit(){const boxes=[...document.querySelectorAll('#checks input')],done=boxes.filter(x=>x.checked).length,total=boxes.length,pct=Math.round(done/total*100);$('auditBar').style.width=pct+'%';$('auditCount').textContent=done+' من '+total+' بنود مكتملة — '+pct+'%';$('auditAdvice').innerHTML=pct===100?'<span class="good">اكتملت قائمة المراجعة.</span> احتفظ بسجلاتك وراجعها دوريًا.': '<span class="warn">هناك '+(total-done)+' بنود لم يتم تأكيدها.</span> راجعها على الراوتر قبل بيع الكروت.';}
 document.querySelectorAll('#checks input').forEach(x=>x.addEventListener('change',updateAudit));
