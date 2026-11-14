@@ -96,7 +96,7 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 </div>
 </section>
 <section id="about" class="hidden">
-<div class="panel"><h2>ℹ️ معلومات الإصدار</h2><ul><li>الإصدار: 0.4 — نموذج حسابي مطابق لنطاق الكروت المحدد.</li><li>نطاق أسماء المستخدمين الافتراضي: 1 إلى 9,999,999,999.</li><li>نطاق كلمات المرور: 01 إلى 100 (100 احتمال).</li><li>لا يتم تخزين أو إرسال بيانات دخول.</li><li>لا يوجد اتصال مباشر بالراوتر في هذا الإصدار.</li><li>أضيفت بنود مراجعة خاصة بأمان كروت Hotspot ومراقبة محاولات الدخول.</li></ul></div>
+<div class="panel"><h2>ℹ️ معلومات الإصدار</h2><ul><li>الإصدار: 1.0 — لوحة موحدة تجمع المحاكاة ومراجعة الحماية وتحليل السجلات.</li><li>نطاق أسماء المستخدمين الافتراضي: 1 إلى 9,999,999,999.</li><li>نطاق كلمات المرور: 01 إلى 100 (100 احتمال).</li><li>لا يتم تخزين أو إرسال بيانات دخول.</li><li>لا يوجد اتصال مباشر بالراوتر في هذا الإصدار.</li><li>أضيفت بنود مراجعة خاصة بأمان كروت Hotspot ومراقبة محاولات الدخول.</li></ul></div>
 </section>
 <section id="logs" class="hidden">
 <div class="panel">
@@ -320,9 +320,11 @@ $('exportAudit').addEventListener('click',()=>{
  const boxes=[...document.querySelectorAll('#checks input')],done=boxes.filter(x=>x.checked).length;
  const lines=['MikroTik Security Tester - Self Assessment V0.9','Generated: '+new Date().toLocaleString(),'Review coverage: '+Math.round(done/boxes.length*100)+'%','Confirmed controls: '+done+'/'+boxes.length,'','Control status:',...auditPriorities.map((x,i)=>(boxes[i]?.checked?'CONFIRMED: ':'NOT CONFIRMED: ')+x.title),'','This is a self-assessment, not an automated router scan or proof of security.'];
  if(lastLogReport){lines.push('','Log review summary:','Matched failures: '+lastLogReport.failures,'Timed failures: '+lastLogReport.timedCount,'Sources: '+lastLogReport.ranked.length,'Same-source bursts: '+lastLogReport.bursts.length,'Minute peaks: '+lastLogReport.distributed.length);}
- const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='mikrotik-security-assessment-v09.txt';a.click();URL.revokeObjectURL(url);
+ const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='mikrotik-security-assessment-v10.txt';a.click();URL.revokeObjectURL(url);
 });
 document.querySelectorAll('#checks input').forEach(x=>x.addEventListener('change',updateAudit));
+updateAudit();
+updateDashboard();
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script>
 </body>
