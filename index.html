@@ -6,6 +6,8 @@
 <meta name="theme-color" content="#0b1220">
 <meta name="description" content="محاكي محلي لتقدير مقاومة كلمات المرور ومراجعة إعدادات أمان MikroTik">
 <link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/svg+xml" href="./app-icon.svg">
+<meta name="mobile-web-app-capable" content="yes">
 <title>MikroTik Security Tester</title>
 <style>
 :root{color-scheme:dark;--bg:#08111f;--panel:#111d30;--panel2:#17263c;--line:#263852;--txt:#edf4ff;--muted:#9eb0c9;--accent:#54d6a0;--blue:#67a9ff;--warn:#ffc66d;--red:#ff7d86}
@@ -21,7 +23,7 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="logo">M</div><div><h1>MikroTik Security Tester</h1><p>محاكي محلي لمقاومة تخمين كلمات المرور • الإصدار 1.1</p></div></header>
+<header class="top"><div class="logo">M</div><div><h1>MikroTik Security Tester</h1><p>محاكي محلي لمقاومة تخمين كلمات المرور • الإصدار 1.2</p></div></header>
 <div class="notice"><b>وضع آمن:</b> المحاكي يحسب عدد المحاولات والزمن نظريًا داخل الهاتف فقط. لا يرسل أي طلبات تسجيل دخول إلى الراوتر ولا يجرب كلمات مرور عليه.</div>
 <nav class="tabs">
 <button class="tab active" data-tab="dashboard">لوحة النتائج</button><button class="tab" data-tab="sim">المحاكي</button><button class="tab" data-tab="audit">فحص الحماية</button><button class="tab" data-tab="about">عن التطبيق</button><button class="tab" data-tab="logs">تحليل السجلات</button>
@@ -96,7 +98,7 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 </div>
 </section>
 <section id="about" class="hidden">
-<div class="panel"><h2>ℹ️ معلومات الإصدار</h2><ul><li>الإصدار: 1.1 — لوحة موحدة تجمع المحاكاة ومراجعة الحماية وتحليل السجلات.</li><li>نطاق أسماء المستخدمين الافتراضي: 1 إلى 9,999,999,999.</li><li>نطاق كلمات المرور: 01 إلى 100 (100 احتمال).</li><li>لا يتم تخزين أو إرسال بيانات دخول.</li><li>لا يوجد اتصال مباشر بالراوتر في هذا الإصدار.</li><li>أضيفت بنود مراجعة خاصة بأمان كروت Hotspot ومراقبة محاولات الدخول.</li></ul></div>
+<div class="panel"><h2>ℹ️ معلومات الإصدار</h2><ul><li>الإصدار: 1.2 — لوحة موحدة تجمع المحاكاة ومراجعة الحماية وتحليل السجلات.</li><li>نطاق أسماء المستخدمين الافتراضي: 1 إلى 9,999,999,999.</li><li>نطاق كلمات المرور: 01 إلى 100 (100 احتمال).</li><li>لا يتم تخزين أو إرسال بيانات دخول.</li><li>لا يوجد اتصال مباشر بالراوتر في هذا الإصدار.</li><li>أضيفت بنود مراجعة خاصة بأمان كروت Hotspot ومراقبة محاولات الدخول.</li></ul></div>
 </section>
 <section id="logs" class="hidden">
 <div class="panel">
@@ -111,7 +113,7 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 <p class="muted">ملاحظة: تختلف صيغة السجلات حسب إصدار RouterOS وإعدادات التسجيل. قد لا يمكن استخراج عنوان المصدر من كل سطر. التحليل مؤشر مساعد وليس إثباتًا قاطعًا على هجوم.</p>
 </div>
 </section>
-<p class="footer">مشروع تجريبي تعليمي • destatoraa • V1.1</p>
+<p class="footer">مشروع تجريبي تعليمي • destatoraa • V1.2</p>
 </div>
 <script>
 const $=id=>document.getElementById(id);
@@ -153,7 +155,7 @@ $('calculate').addEventListener('click',()=>{
 $('exportReport').addEventListener('click',()=>{
  if(!lastReport)return;
  const lines=[
- 'MikroTik Security Tester — Local Simulation Report V1.1',
+ 'MikroTik Security Tester — Local Simulation Report V1.2',
  'Generated: '+lastReport.createdAt,
  'IMPORTANT: Local mathematical simulation only; no router login attempts were made.',
  'Target user index: '+lastReport.user,
@@ -266,9 +268,9 @@ function renderLogCharts(report){
 $('exportLogs').addEventListener('click',()=>{
  if(!lastLogReport)return;
  const r=lastLogReport;
- const report=['MikroTik local log review V1.1','Generated: '+r.createdAt,'Lines: '+r.totalLines,'Matched failure lines: '+r.failures,'Timed failure lines: '+r.timedCount,'Unique sources: '+r.ranked.length,'Sources with >=5 failures: '+r.suspicious.length,'Same-source bursts (>=5 in 60 sec):',...r.bursts.map(x=>x.ip+': '+x.count),'Minute peaks (>=10):',...r.distributed.map(x=>new Date(x.time).toLocaleString()+' : '+x.count),'Source counts:',...r.ranked.map(([ip,count])=>ip+': '+count),'','Local analysis only; no router connection or login attempts were made.'];
+ const report=['MikroTik local log review V1.2','Generated: '+r.createdAt,'Lines: '+r.totalLines,'Matched failure lines: '+r.failures,'Timed failure lines: '+r.timedCount,'Unique sources: '+r.ranked.length,'Sources with >=5 failures: '+r.suspicious.length,'Same-source bursts (>=5 in 60 sec):',...r.bursts.map(x=>x.ip+': '+x.count),'Minute peaks (>=10):',...r.distributed.map(x=>new Date(x.time).toLocaleString()+' : '+x.count),'Source counts:',...r.ranked.map(([ip,count])=>ip+': '+count),'','Local analysis only; no router connection or login attempts were made.'];
  const blob=new Blob([report.join('\n')],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
- a.href=url;a.download='mikrotik-log-review-v11.txt';a.click();URL.revokeObjectURL(url);
+ a.href=url;a.download='mikrotik-log-review-v12.txt';a.click();URL.revokeObjectURL(url);
 });
 const auditPriorities=[
  {title:'تغيير كلمة مرور admin الافتراضية أو تعطيل الحساب الافتراضي',weight:10},
@@ -301,12 +303,12 @@ function updateDashboard(){
 }
 $('exportCombined').addEventListener('click',()=>{
  const boxes=[...document.querySelectorAll('#checks input')],done=boxes.filter(x=>x.checked).length;
- const lines=['MikroTik Security Tester - Unified Report V1.1','Generated: '+new Date().toLocaleString(),'','SELF-ASSESSMENT','Confirmed controls: '+done+'/'+boxes.length,'Review coverage: '+Math.round(done/boxes.length*100)+'%','',...auditPriorities.map((x,i)=>(boxes[i]?.checked?'CONFIRMED: ':'NOT CONFIRMED: ')+x.title),'','SIMULATION'];
+ const lines=['MikroTik Security Tester - Unified Report V1.2','Generated: '+new Date().toLocaleString(),'','SELF-ASSESSMENT','Confirmed controls: '+done+'/'+boxes.length,'Review coverage: '+Math.round(done/boxes.length*100)+'%','',...auditPriorities.map((x,i)=>(boxes[i]?.checked?'CONFIRMED: ':'NOT CONFIRMED: ')+x.title),'','SIMULATION'];
  if(lastReport){lines.push('Simulation completed: yes','Target user index: '+lastReport.user,'Password index: '+lastReport.password,'Theoretical attempt position: '+lastReport.attempts,'Assumed local rate: '+lastReport.rate,'Estimated mathematical time: '+duration(lastReport.seconds));}else lines.push('Simulation completed: no');
  lines.push('','LOG REVIEW');
  if(lastLogReport){lines.push('Matched failure lines: '+lastLogReport.failures,'Timed failure lines: '+lastLogReport.timedCount,'Unique source entries: '+lastLogReport.ranked.length,'Same-source bursts (>=5 in 60 sec): '+lastLogReport.bursts.length,'Minute peaks (>=10 failures): '+lastLogReport.distributed.length,...lastLogReport.ranked.map(([ip,count])=>ip+': '+count));}else lines.push('Log review completed: no');
  lines.push('','IMPORTANT: This is a local self-assessment and log summary, not an automated router scan or proof of security. No login attempts were made.');
- const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='mikrotik-unified-security-report-v11.txt';a.click();URL.revokeObjectURL(url);
+ const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='mikrotik-unified-security-report-v12.txt';a.click();URL.revokeObjectURL(url);
 });
 function updateAudit(){
  const boxes=[...document.querySelectorAll('#checks input')],done=boxes.filter(x=>x.checked).length,total=boxes.length,pct=Math.round(done/total*100);
@@ -319,9 +321,9 @@ function updateAudit(){
 }
 $('exportAudit').addEventListener('click',()=>{
  const boxes=[...document.querySelectorAll('#checks input')],done=boxes.filter(x=>x.checked).length;
- const lines=['MikroTik Security Tester - Self Assessment V1.1','Generated: '+new Date().toLocaleString(),'Review coverage: '+Math.round(done/boxes.length*100)+'%','Confirmed controls: '+done+'/'+boxes.length,'','Control status:',...auditPriorities.map((x,i)=>(boxes[i]?.checked?'CONFIRMED: ':'NOT CONFIRMED: ')+x.title),'','This is a self-assessment, not an automated router scan or proof of security.'];
+ const lines=['MikroTik Security Tester - Self Assessment V1.2','Generated: '+new Date().toLocaleString(),'Review coverage: '+Math.round(done/boxes.length*100)+'%','Confirmed controls: '+done+'/'+boxes.length,'','Control status:',...auditPriorities.map((x,i)=>(boxes[i]?.checked?'CONFIRMED: ':'NOT CONFIRMED: ')+x.title),'','This is a self-assessment, not an automated router scan or proof of security.'];
  if(lastLogReport){lines.push('','Log review summary:','Matched failures: '+lastLogReport.failures,'Timed failures: '+lastLogReport.timedCount,'Sources: '+lastLogReport.ranked.length,'Same-source bursts: '+lastLogReport.bursts.length,'Minute peaks: '+lastLogReport.distributed.length);}
- const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='mikrotik-security-assessment-v11.txt';a.click();URL.revokeObjectURL(url);
+ const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='mikrotik-security-assessment-v12.txt';a.click();URL.revokeObjectURL(url);
 });
 document.querySelectorAll('#checks input').forEach(x=>x.addEventListener('change',updateAudit));
 updateAudit();
