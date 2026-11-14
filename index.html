@@ -21,7 +21,7 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="logo">M</div><div><h1>MikroTik Security Tester</h1><p>محاكي محلي لمقاومة تخمين كلمات المرور • الإصدار 0.2</p></div></header>
+<header class="top"><div class="logo">M</div><div><h1>MikroTik Security Tester</h1><p>محاكي محلي لمقاومة تخمين كلمات المرور • الإصدار 0.3</p></div></header>
 <div class="notice"><b>وضع آمن:</b> المحاكي يحسب عدد المحاولات والزمن نظريًا داخل الهاتف فقط. لا يرسل أي طلبات تسجيل دخول إلى الراوتر ولا يجرب كلمات مرور عليه.</div>
 <nav class="tabs">
 <button class="tab active" data-tab="sim">المحاكي</button><button class="tab" data-tab="audit">فحص الحماية</button><button class="tab" data-tab="about">عن التطبيق</button>
@@ -61,14 +61,20 @@ ul{padding-right:20px;margin:8px 0}li{margin:8px 0;color:#d5e1f2;font-size:13px;
 <label class="field"><span><input type="checkbox"> تم تحديث RouterOS إلى إصدار مدعوم ومستقر</span></label>
 <label class="field"><span><input type="checkbox"> تم تفعيل قواعد Firewall لحماية خدمات الإدارة</span></label>
 <label class="field"><span><input type="checkbox"> تم حفظ نسخة احتياطية آمنة من الإعدادات</span></label>
+<label class="field"><span><input type="checkbox"> حسابات Hotspot لا تستخدم أسماء أو كلمات مرور متسلسلة سهلة التوقع</span></label>
+<label class="field"><span><input type="checkbox"> تم ضبط حدود الجلسات والوقت/الحجم لكل كارت حسب الباقة</span></label>
+<label class="field"><span><input type="checkbox"> تم منع مشاركة الكارت بعدد أجهزة أكبر من المسموح</span></label>
+<label class="field"><span><input type="checkbox"> صفحة الدخول لا تكشف بيانات كروت مستخدمين آخرين</span></label>
+<label class="field"><span><input type="checkbox"> تتم مراجعة سجلات الدخول لرصد المحاولات الفاشلة والمتكررة</span></label>
 </div>
-<div class="bar"><span id="auditBar"></span></div><p class="muted" id="auditCount">0 من 7 بنود مكتملة</p>
+<div class="bar"><span id="auditBar"></span></div><p class="muted" id="auditCount">0 من 12 بنود مكتملة</p>
+<div class="result" id="auditAdvice">أكمل البنود لتظهر لك نسبة المراجعة. البنود غير المكتملة تعني نقاطًا تحتاج إلى فحص، وليست إثباتًا بوجود اختراق.</div>
 </div>
 </section>
 <section id="about" class="hidden">
-<div class="panel"><h2>ℹ️ معلومات الإصدار</h2><ul><li>الإصدار: 0.2 — محاكاة حسابية محسّنة وتقرير قابل للتصدير.</li><li>نطاق أسماء المستخدمين الافتراضي: 1 إلى 9,999,999,999.</li><li>نطاق كلمات المرور الافتراضي: 1 إلى 100.</li><li>لا يتم تخزين أو إرسال بيانات دخول.</li><li>لا يوجد اتصال مباشر بالراوتر في هذا الإصدار.</li></ul></div>
+<div class="panel"><h2>ℹ️ معلومات الإصدار</h2><ul><li>الإصدار: 0.3 — تحسين مراجعة أمان Hotspot والكروت.</li><li>نطاق أسماء المستخدمين الافتراضي: 1 إلى 9,999,999,999.</li><li>نطاق كلمات المرور الافتراضي: 1 إلى 100.</li><li>لا يتم تخزين أو إرسال بيانات دخول.</li><li>لا يوجد اتصال مباشر بالراوتر في هذا الإصدار.</li><li>أضيفت بنود مراجعة خاصة بأمان كروت Hotspot ومراقبة محاولات الدخول.</li></ul></div>
 </section>
-<p class="footer">مشروع تجريبي تعليمي • destatoraa • V0.2</p>
+<p class="footer">مشروع تجريبي تعليمي • destatoraa • V0.3</p>
 </div>
 <script>
 const $=id=>document.getElementById(id);
@@ -130,7 +136,7 @@ $('benchmark').addEventListener('click',()=>{
  const elapsed=(performance.now()-start)/1000;const rate=1500000/elapsed;
  $('benchResult').innerHTML='اكتمل القياس المحلي: <b class="good">'+fmt(rate)+' عملية حسابية/ثانية</b><br><span class="muted">هذا اختبار أداء JavaScript للهاتف، وليس معدل محاولات شبكة أو تسجيل دخول. يمكنك استخدامه للمقارنة بين الأجهزة فقط.</span>';
 });
-function updateAudit(){const boxes=[...document.querySelectorAll('#checks input')],done=boxes.filter(x=>x.checked).length;$('auditBar').style.width=(done/boxes.length*100)+'%';$('auditCount').textContent=done+' من '+boxes.length+' بنود مكتملة';}
+function updateAudit(){const boxes=[...document.querySelectorAll('#checks input')],done=boxes.filter(x=>x.checked).length,total=boxes.length,pct=Math.round(done/total*100);$('auditBar').style.width=pct+'%';$('auditCount').textContent=done+' من '+total+' بنود مكتملة — '+pct+'%';$('auditAdvice').innerHTML=pct===100?'<span class="good">اكتملت قائمة المراجعة.</span> احتفظ بسجلاتك وراجعها دوريًا.': '<span class="warn">هناك '+(total-done)+' بنود لم يتم تأكيدها.</span> راجعها على الراوتر قبل بيع الكروت.';}
 document.querySelectorAll('#checks input').forEach(x=>x.addEventListener('change',updateAudit));
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script>
