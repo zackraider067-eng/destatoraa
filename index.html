@@ -252,18 +252,18 @@ $('exportLogs').addEventListener('click',()=>{
  a.href=url;a.download='mikrotik-log-review-v07.txt';a.click();URL.revokeObjectURL(url);
 });
 const auditPriorities=[
- {title:'تقييد الوصول الإداري لعناوين موثوقة فقط',weight:10},
- {title:'تفعيل قواعد Firewall لحماية خدمات الإدارة',weight:10},
- {title:'تغيير بيانات حساب admin الافتراضية',weight:10},
- {title:'مراجعة سجلات الدخول بصورة دورية',weight:10},
- {title:'منع أنماط كروت Hotspot سهلة التوقع',weight:10},
+ {title:'تغيير كلمة مرور admin الافتراضية أو تعطيل الحساب الافتراضي',weight:10},
+ {title:'إنشاء مستخدم إداري غير متوقع بصلاحيات محدودة',weight:8},
  {title:'تعطيل خدمات الإدارة غير الضرورية',weight:8},
- {title:'تحديث RouterOS إلى إصدار مدعوم',weight:8},
- {title:'استخدام حساب إداري محدود الصلاحيات',weight:8},
- {title:'منع كشف بيانات الكروت في صفحة الدخول',weight:8},
- {title:'ضبط حدود الجلسات ومشاركة الكروت',weight:6},
- {title:'حفظ نسخة احتياطية آمنة',weight:6},
- {title:'مراجعة إعدادات الأجهزة المسموح بها',weight:6}
+ {title:'تقييد الوصول الإداري لعناوين موثوقة فقط',weight:10},
+ {title:'تحديث RouterOS إلى إصدار مدعوم ومستقر',weight:8},
+ {title:'تفعيل قواعد Firewall لحماية خدمات الإدارة',weight:10},
+ {title:'حفظ نسخة احتياطية آمنة من الإعدادات',weight:6},
+ {title:'منع استخدام أسماء أو كلمات مرور Hotspot سهلة التوقع',weight:10},
+ {title:'ضبط حدود الجلسات والوقت والحجم',weight:6},
+ {title:'منع مشاركة الكارت بعدد أجهزة أكبر من المسموح',weight:6},
+ {title:'منع صفحة الدخول من كشف بيانات كروت أخرى',weight:8},
+ {title:'مراجعة سجلات الدخول دوريًا',weight:10}
 ];
 function updateAudit(){
  const boxes=[...document.querySelectorAll('#checks input')],done=boxes.filter(x=>x.checked).length,total=boxes.length,pct=Math.round(done/total*100);
