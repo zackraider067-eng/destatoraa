@@ -1,4 +1,4 @@
-const CACHE_NAME = "mikrotik-security-tester-v0.4";
+const CACHE_NAME = "mikrotik-security-tester-v0.5";
 const FILES = ["./", "./index.html", "./manifest.json"];
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(FILES)));
